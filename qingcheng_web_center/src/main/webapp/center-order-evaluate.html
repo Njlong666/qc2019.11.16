@@ -164,19 +164,19 @@
                                             </td>
                                             <td width="5%" class="center">{{orderItems.num}}</td>
                                             <td width="8%" class="center">申请售后</td>
-                                            <td width="10%" class="center">
+                                            <td width="10%" class="center" :rowspan="orderAndItems.list.length">
                                                 <ul class="unstyled">
                                                     <li>¥{{(orderItems.payMoney/100).toFixed(2)}}</li>
                                                     <li>（含运费：￥{{(orderItems.postFee/100).toFixed(2)}}）</li>
                                                 </ul>
                                             </td>
-                                            <td width="10%" class="center">
+                                            <td width="10%" class="center" :rowspan="orderAndItems.list.length">
                                                 <ul class="unstyled">
                                                     <li>交易成功</li>
                                                     <li><a href="#" class="btn">订单详情 </a></li>
                                                 </ul>
                                             </td>
-                                            <td width="10%" class="center">
+                                            <td width="10%" class="center" :rowspan="orderAndItems.list.length">
                                                 <ul class="unstyled">
                                                     <li><a href="#" class="sui-btn btn-info">评价</a></li>
                                                     <li v-if="orderAndItems.order.orderStatus=='0'">取消订单</li>
@@ -187,7 +187,7 @@
 
                                         <tr v-for="(orderItems,index) in orderAndItems.list" v-if="index!=0">
                                             <td width="35%">
-                                                <div class="typographic"><img :src="orderItems.image"/>
+                                                <div class="typographic"><img id="goodsPic" :src="orderItems.image"/>
                                                     <a href="#" class="block-text">{{orderItems.name}}</a>
                                                 </div>
                                             </td>

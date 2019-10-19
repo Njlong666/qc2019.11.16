@@ -163,28 +163,28 @@
                                             </td>
                                             <td width="5%" class="center">{{orderItems.num}}</td>
                                             <td width="8%" class="center">未发货</td>
-                                            <td width="10%" class="center">
+                                            <td width="10%" class="center" :rowspan="orderAndItems.list.length">
                                                 <ul class="unstyled">
                                                     <li>¥{{(orderItems.payMoney/100).toFixed(2)}}</li>
                                                     <li>（含运费：￥{{(orderItems.postFee/100).toFixed(2)}}）</li>
                                                 </ul>
                                             </td>
-                                            <td width="10%" class="center">
+                                            <td width="10%" class="center" :rowspan="orderAndItems.list.length">
                                                 <ul class="unstyled">
                                                     <li>等待卖家发货</li>
                                                     <li><a href="#" class="btn">订单详情 </a></li>
                                                 </ul>
                                             </td>
-                                            <td width="10%" class="center">
+                                            <td width="10%" class="center" :rowspan="orderAndItems.list.length">
                                                 <ul class="unstyled">
-                                                    <li><a href="#" class="sui-btn btn-info" v-if="orderAndItems.order.orderStatus=='1'">提醒发货</a></li>
+                                                    <li><a @click="alertSend()" href="javascript:void(0)" class="sui-btn btn-info">提醒发货</a></li>
                                                 </ul>
                                             </td>
                                         </tr>
 
                                         <tr v-for="(orderItems,index) in orderAndItems.list" v-if="index!=0">
                                             <td width="35%">
-                                                <div class="typographic"><img :src="orderItems.image"/>
+                                                <div class="typographic"><img id="goodsPic" :src="orderItems.image"/>
                                                     <a href="#" class="block-text">{{orderItems.name}}</a>
                                                 </div>
                                             </td>
@@ -461,7 +461,7 @@
                 orderAndItemsList: [],
                 page: 1,
                 size: 2,
-                total: 10
+                total: 0
             }
         },
         created() {
@@ -479,6 +479,15 @@
                     this.orderAndItemsList = response.data.rows;
                     this.total= response.data.total;
                 });
+            },
+            alertSend() {
+                if(this.count < 3) {
+                    alert("已提醒商家发货!");
+                    this.count += 1;
+                } else {
+                    alert("今日提醒次数用完!!");
+                }
+
             }
         }
     });

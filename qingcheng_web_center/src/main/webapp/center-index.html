@@ -156,7 +156,7 @@
                                         <tr v-for="(orderItems,index) in orderAndItems.list" v-if="index==0">
                                             <td width="35%">
                                                 <div class="typographic"><img id="goodsPic" :src="orderItems.image"/>
-                                                    <a href="#" class="block-text">{{orderItems.name}}</a>
+                                                    <a href="#" class="block-text" style="margin-top: 30px">{{orderItems.name}}</a>
                                                 </div>
                                             </td>
                                             <td width="5%" class="center">
@@ -173,35 +173,35 @@
                                             </td>
                                             <td width="8%" class="center"
                                                 v-if="orderAndItems.order.consignStatus==null"></td>
-                                            <td width="10%" class="center">
+                                            <td width="10%" class="center" :rowspan="orderAndItems.list.length">
                                                 <ul class="unstyled">
                                                     <li>¥{{(orderItems.payMoney/100).toFixed(2)}}</li>
                                                     <li>（含运费：￥{{(orderItems.postFee/100).toFixed(2)}}）</li>
                                                 </ul>
                                             </td>
-                                            <td width="10%" class="center">
+                                            <td width="10%" class="center" :rowspan="orderAndItems.list.length">
                                                 <ul class="unstyled">
                                                     <li v-if="orderAndItems.order.orderStatus=='0'">等待买家付款</li>
                                                     <li v-if="orderAndItems.order.orderStatus=='1'">等待卖家发货</li>
                                                     <li v-if="orderAndItems.order.orderStatus=='2'">物流派件中</li>
                                                     <li v-if="orderAndItems.order.orderStatus=='3'">交易成功</li>
-                                                    <li><a href="#" class="btn">订单详情 </a></li>
+                                                    <li><a @click="goDetail(orderAndItems.order,orderAndItems.list)" class="btn">订单详情 </a></li>
                                                 </ul>
                                             </td>
-                                            <td width="10%" class="center">
+                                            <td width="10%" class="center" :rowspan="orderAndItems.list.length">
                                                 <ul class="unstyled">
-                                                    <li><a :href="goPay(orderAndItems.order.id,orderAndItems.order.payMoney)" class="sui-btn btn-info"
+                                                    <li><a @click="goPay(orderAndItems.order.id,orderAndItems.order.payMoney)"  class="sui-btn btn-info"
                                                            v-if="orderAndItems.order.orderStatus=='0'">立即付款</a></li>
 
-                                                    <li><a @click="alertSend()" href="javascript:void(0)"
+                                                    <li><a @click="alertSend()"
                                                            class="sui-btn btn-info"
                                                            v-if="orderAndItems.order.orderStatus=='1'">提醒发货</a></li>
 
-                                                    <li><a @click="confirmReceive(orderAndItems.order.id)" href="javascript:void(0)"
+                                                    <li><a @click="confirmReceive(orderAndItems.order.id)"
                                                            class="sui-btn btn-info"
                                                            v-if="orderAndItems.order.orderStatus=='2'">确认收货</a></li>
 
-                                                    <li><a href="mycomment.html" class="sui-btn btn-info"
+                                                    <li><a :href="goComment(orderAndItems.list,orderAndItems.order)" class="sui-btn btn-info"
                                                            v-if="orderAndItems.order.orderStatus=='3'">评价</a></li>
 
                                                     <li v-if="orderAndItems.order.orderStatus=='0'">取消订单</li>
@@ -212,8 +212,8 @@
 
                                         <tr v-for="(orderItems,index) in orderAndItems.list" v-if="index!=0">
                                             <td width="35%">
-                                                <div class="typographic"><img :src="orderItems.image"/>
-                                                    <a href="#" class="block-text">{{orderItems.name}}</a>
+                                                <div class="typographic"><img id="goodsPic" :src="orderItems.image"/>
+                                                    <a href="#" class="block-text" style="margin-top: 30px">{{orderItems.name}}</a>
                                                 </div>
                                             </td>
                                             <td width="5%" class="center">
@@ -517,7 +517,7 @@
                 });
             },
             goPay(id,money) {
-                location.href = `http://localhost:9102/pay.html?ordersn=${id}&money=${money}`;
+                location.href = `https://qingcheng.utools.club/pay.html?ordersn=${id}&money=${money}`;
             },
             alertSend() {
                 if(this.count==0) {
@@ -531,7 +531,14 @@
             confirmReceive(id) {
                 axios.get(`/orderCenter/confirm.do?id=${id}`).then(response => {
                    alert(response.data.message);
+                   this.getOnesOrderAndItems();
                 });
+            },
+            goComment(list,order) {
+                return `mycommeny.html?list=${list}&order=${order}`;
+            },
+            goDetail(order,list) {
+                location.href = `center-order-detail?order=${order}&orderItemList=${list}`;
             }
         }
     });

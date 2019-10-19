@@ -95,7 +95,6 @@ public class OrderController {
 
     @GetMapping("/confirm")
     public Result confirmReceive(String id) {
-        System.out.println(111);
         return orderService.confirmReceive(id);
     }
 }

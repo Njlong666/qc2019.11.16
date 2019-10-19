@@ -163,28 +163,28 @@
                                             </td>
                                             <td width="5%" class="center">{{orderItems.num}}</td>
                                             <td width="8%" class="center"></td>
-                                            <td width="10%" class="center">
+                                            <td width="10%" class="center" :rowspan="orderAndItems.list.length">
                                                 <ul class="unstyled">
                                                     <li>¥{{(orderItems.payMoney/100).toFixed(2)}}</li>
                                                     <li>（含运费：￥{{(orderItems.postFee/100).toFixed(2)}}）</li>
                                                 </ul>
                                             </td>
-                                            <td width="10%" class="center">
+                                            <td width="10%" class="center" :rowspan="orderAndItems.list.length">
                                                 <ul class="unstyled">
-                                                    <li v-if="orderAndItems.order.orderStatus=='2'">物流派件中</li>
+                                                    <li>物流派件中</li>
                                                     <li><a href="#" class="btn">订单详情 </a></li>
                                                 </ul>
                                             </td>
-                                            <td width="10%" class="center">
+                                            <td width="10%" class="center" :rowspan="orderAndItems.list.length">
                                                 <ul class="unstyled">
-                                                    <li><a href="#" class="sui-btn btn-info">确认收货</a></li>
+                                                    <li><a @click="confirmReceive(orderAndItems.order.id)" href="javascript:void(0)" class="sui-btn btn-info">确认收货</a></li>
                                                 </ul>
                                             </td>
                                         </tr>
 
                                         <tr v-for="(orderItems,index) in orderAndItems.list" v-if="index!=0">
                                             <td width="35%">
-                                                <div class="typographic"><img :src="orderItems.image"/>
+                                                <div class="typographic"><img id="goodsPic" :src="orderItems.image"/>
                                                     <a href="#" class="block-text">{{orderItems.name}}</a>
                                                 </div>
                                             </td>
@@ -480,6 +480,12 @@
                 axios.get(`/orderCenter/getWaitToReceiveOrders.do?page=${this.page}&size=${this.size}`).then(response => {
                     this.orderAndItemsList = response.data.rows;
                     this.total = response.data.total;
+                });
+            },
+            confirmReceive(id) {
+                axios.get(`/orderCenter/confirm.do?id=${id}`).then(response => {
+                    alert(response.data.message);
+                    this.getOnesOrderAndItems();
                 });
             }
         }

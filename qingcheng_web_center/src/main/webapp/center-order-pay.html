@@ -174,21 +174,21 @@
                                             </td>
                                             <td width="5%" class="center">{{orderItems.num}}</td>
                                             <td width="8%" class="center"></td>
-                                            <td width="10%" class="center">
+                                            <td width="10%" class="center" :rowspan="orderAndItems.list.length">
                                                 <ul class="unstyled">
-                                                    <li>¥{{(orderItems.payMoney/100).toFixed(2)}}</li>
-                                                    <li>（含运费：￥{{(orderItems.postFee/100).toFixed(2)}}）</li>
+                                                    <li>¥{{((orderAndItems.order.payMoney)/100).toFixed(2)}}</li>
+                                                    <li>（含运费：￥{{((orderAndItems.order.postFee)/100).toFixed(2)}}）</li>
                                                 </ul>
                                             </td>
-                                            <td width="10%" class="center">
+                                            <td width="10%" class="center" :rowspan="orderAndItems.list.length">
                                                 <ul class="unstyled">
-                                                    <li v-if="orderAndItems.order.orderStatus=='1'">等待卖家发货</li>
+                                                    <li>等待买家付款</li>
                                                     <li><a href="#" class="btn">订单详情 </a></li>
                                                 </ul>
                                             </td>
-                                            <td width="10%" class="center">
+                                            <td width="10%" class="center" :rowspan="orderAndItems.list.length">
                                                 <ul class="unstyled">
-                                                    <li><a href="#" class="sui-btn btn-info">立即付款</a></li>
+                                                    <li><a @click="goPay(orderAndItems.order.id,orderAndItems.order.payMoney)" href="javascript:void(0)" class="sui-btn btn-info">立即付款</a></li>
                                                     <li>取消订单</li>
                                                 </ul>
                                             </td>
@@ -196,7 +196,7 @@
 
                                         <tr v-for="(orderItems,index) in orderAndItems.list" v-if="index!=0">
                                             <td width="35%">
-                                                <div class="typographic"><img :src="orderItems.image"/>
+                                                <div class="typographic"><img id="goodsPic" :src="orderItems.image"/>
                                                     <a href="#" class="block-text">{{orderItems.name}}</a>
                                                 </div>
                                             </td>
@@ -498,6 +498,9 @@
                     this.orderAndItemsList = response.data.rows;
                     this.total = response.data.total;
                 });
+            },
+            goPay(id,money) {
+                location.href = `https://qingcheng.utools.club/pay.html?ordersn=${id}&money=${money}`;
             }
         }
     });
