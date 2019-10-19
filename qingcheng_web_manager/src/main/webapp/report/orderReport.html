@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    </center><title>昨日交易统计</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div id="app">
+    <div>
+    <center><h1>昨日交易统计表</h1></center>
+    <el-date-picker
+            v-model="dateRange"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            @change="fetchData()">
+    </el-date-picker>
+    <el-button type="success" >下单转化率:</el-button><em v-if="orderNum1!=0" style="color:red">{{((orderNum1/1000)*100).toFixed(2)}}%</em>
+    <el-button type="success" >付款转化率:</el-button><em v-if="orderNum1!=0" style="color:red"> {{((orderNum2/orderNum1)*100).toFixed(2)}}%</em>
+    <el-button type="success">成交转化率:</el-button><em v-if="orderNum1!=0" style="color:red">{{((orderNum2/1000)*100).toFixed(2)}}%</em>
+    </div>
+<div id="main1" style="width: 600px;height:400px; float:left" ></div>
+<div id="main2" style="width: 1300px;height:400px; margin-top:300px; "></div>
+</div>
+</body>
+<script src="/js/util.js"></script>
+<script src="/js/axios.js"></script>
+<script src="/js/vue.js"></script>
+<script src="/js/elementui.js"></script>
+<script src="/js/echarts.js"></script>
+<script>
+    new Vue({
+        el: "#app",
+        data() {
+            return {
+                dateRange:[],
+                orderNum1:0,  //下单
+                orderNum2:0, //付款
+              tableData:[],
+                payMoney2:[],
+                returnMoney:[],
+                orderNum2:[],
+                orderTotal2:[]
+
+            }
+        },
+        methods: {
+            fetchData() {
+                 let date1=this.dateRange[0].Format('yyyy-MM-dd');
+                 let date2=this.dateRange[1].Format('yyyy-MM-dd');
+                axios.get(`/ordercalum/dailyCalum.do?date1=${date1}&date2=${date2}`).then(response => {
+                    //获取数据
+                    /*（2）下单转化率= 下单人数/浏览人数
+                     （3）付款转化率=付款人数/下单人数
+                     （4）成交转化率=付款人数/浏览人数
+
+*/                           this.tableData= response.data;
+                        let payMoney2Right=[];
+                        let returnMoneyRight=[];
+                        let orderNum2Right=[];
+                        let orderTotal2Right=[];
+                          let orderNum1=0;
+                          let orderNum2=0;
+                    for (let i = 0; i <this.tableData.length ; i++) {
+                        orderNum1+=this.tableData[i].orderNum1;
+                        orderNum2+=this.tableData[i].orderNum2;
+                        payMoney2Right.push(this.tableData[i].payMoney2);
+                        returnMoneyRight.push(this.tableData[i].returnMoney);
+                        orderNum2Right.push(this.tableData[i].orderNum2);
+                        orderTotal2Right.push(this.tableData[i].orderTotal2);
+
+                    }
+                    let person=1000*this.tableData.length;
+                    this.orderNum1=orderNum1;
+                    this.orderNum2=orderNum2;
+                      let num1=Math.round(person/(person+this.orderNum1+this.orderNum2)*100);
+                      let num2=Math.round(this.orderNum1/(person+this.orderNum1+this.orderNum2)*100);
+                      let num3=Math.round(this.orderNum2/(person+this.orderNum1+this.orderNum2)*100);
+                    let DataLeft=[];
+                    DataLeft.push({value:num1,name:"浏览"});
+                    DataLeft.push({value:num2,name:"下单"});
+                    DataLeft.push({value:num3,name:"付款"});
+
+                    let myChar1 = echarts.init(document.getElementById('main1'));
+                    let option1 = {
+                        title: {
+                            text: '漏斗图',
+                            subtext: '昨日交易统计表'
+                        },
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: "{a} <br/>{b} : {c}%"
+                        },
+                        toolbox: {
+                            feature: {
+                                dataView: {readOnly: false},
+                                restore: {},
+                                saveAsImage: {}
+                            }
+                        },
+                        legend: {
+                            data: ['浏览', '下单', '付款']
+                        },
+                        calculable: true,
+                        series: [
+                            {
+                                name: '漏斗图',
+                                type: 'funnel',
+                                left: '10%',
+                                top: 60,
+                                //x2: 80,
+                                bottom: 60,
+                                width: '80%',
+                                //height: {totalHeight} - y - y2,
+                                min: 0,
+                                max: 100,
+                                minSize: '0%',
+                                maxSize: '100%',
+                                sort: 'descending',
+                                gap: 2,
+                                label: {
+                                    show: true,
+                                    position: 'inside'
+                                },
+                                labelLine: {
+                                    length: 10,
+                                    lineStyle: {
+                                        width: 1,
+                                        type: 'solid'
+                                    }
+                                },
+                                itemStyle: {
+                                    borderColor: '#fff',
+                                    borderWidth: 1
+                                },
+                                emphasis: {
+                                    label: {
+                                        fontSize: 20
+                                    }
+                                },
+                                data: DataLeft
+                            }
+                        ]
+                    };
+                    myChar1.setOption(option1);
+
+                    date1=Date.parse(date1);
+                    date2=Date.parse(date2);
+                    let days=(date2-date1)/86400000;
+                      let daysArray=[];
+                    for (let i = 0; i <=days; i++) {
+                            daysArray.push(new Date(date1));
+                              date1+=86400000;
+                    }
+
+                    //折线图
+                    let myChar2 = echarts.init(document.getElementById('main2'));
+                    let option2 = {
+                        title: {
+                            text: '折线图堆叠'
+                        },
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        legend: {
+                            data:['付款金额','退款金额','付款人数','付款件数']
+                        },
+                        grid: {
+                            left: '3%',
+                            right: '4%',
+                            bottom: '3%',
+                            containLabel: true
+                        },
+                        toolbox: {
+                            feature: {
+                                saveAsImage: {}
+                            }
+                        },
+                        xAxis: {
+                            type: 'category',
+                            boundaryGap: false,
+                            data: daysArray
+                        },
+                        yAxis: {
+                            type: 'value'
+                        },
+                        series: [
+                            {
+                                name:'付款金额',
+                                type:'line',
+                                stack: '总量',
+                                data:payMoney2Right
+                            },
+                            {
+                                name:'退款金额',
+                                type:'line',
+                                stack: '总量',
+                                data:returnMoneyRight
+                            },
+                            {
+                                name:'付款人数',
+                                type:'line',
+                                stack: '总量',
+                                data:orderNum2Right
+                            },
+                            {
+                                name:'付款件数',
+                                type:'line',
+                                stack: '总量',
+                                data:orderTotal2Right
+                            }
+                        ]
+                    };
+                     myChar2.setOption(option2)
+
+                })
+            }
+        }
+    })
+</script>
+</html>
