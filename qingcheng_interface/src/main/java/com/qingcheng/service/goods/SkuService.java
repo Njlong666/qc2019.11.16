@@ -67,4 +67,9 @@ public interface SkuService {
      */
     public List<Sku> getRoundRows(int page);
 
+
+
+    public List<Sku> findBySpuId(String spuId);
+
+
 }

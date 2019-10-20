@@ -4,7 +4,6 @@ import com.github.wxpay.sdk.WXPayUtil;
 import com.qingcheng.service.pay.WeixinPayService;
 import com.qingcheng.util.HttpClient;
 import org.springframework.beans.factory.annotation.Value;
-import tk.mybatis.mapper.entity.Example;
 
 import java.util.HashMap;
 import java.util.Map;

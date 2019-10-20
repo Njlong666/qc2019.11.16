@@ -16,6 +16,7 @@ import com.qingcheng.pojo.order.OrderLog;
 import com.qingcheng.service.goods.SkuService;
 import com.qingcheng.service.order.CartService;
 import com.qingcheng.service.order.OrderService;
+import com.qingcheng.service.pay.WeixinPayService;
 import com.qingcheng.util.IdWorker;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -150,7 +151,10 @@ public class OrderServiceImpl implements OrderService {
                 orderItemMapper.insert(orderItem);
             }
 
-            //int x=1/0;
+            //调用延迟消息发送方法
+            sendDelayMessage(order.getId());
+
+
         } catch (Exception e) {
             e.printStackTrace();
             //发送回滚消息
@@ -422,6 +426,90 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+
+    /*****
+     *
+     *      订单超时回滚
+     *
+     * @param orderId
+     */
+    @Reference
+    private WeixinPayService weixinPayService;
+
+    @Override
+    public void rollBackOrder(String orderId) {
+
+
+        // 使用微信查询订单api
+        Map<String,String> map = weixinPayService.queryPayStatus(orderId);
+        System.out.println("///////orderId"+map.get("return_code"));
+        /***
+         * 返回状态码	return_code		SUCCESS
+         * 业务结果	    result_code		SUCCESS
+         * 交易状态	    trade_state     NOTPAY—未支付
+         */
+        if ("SUCCESS".equals(map.get("return_code")) && "SUCCESS".equals(map.get("result_code") ) && "NOTPAY".equals(map.get("trade_state"))){
+            //关闭微信订单
+            Map<String,String> closePay = weixinPayService.closePay(orderId);
+        }
+
+
+        /*****
+         *
+         * 交易状态	    trade_state     CLOSED—已关闭
+         *
+         */
+        if ("SUCCESS".equals(map.get("return_code")) && "SUCCESS".equals(map.get("result_code") ) && "CLOSED".equals(map.get("trade_state"))){
+            //修改以关闭的订单状态
+            Order order = new Order();
+            order.setId(orderId);
+            //订单状态为 4 关闭状态
+            order.setOrderStatus("4");
+            orderMapper.updateByPrimaryKeySelective(order);
+
+
+            //恢复商品表库存
+            Example example = new Example(OrderItem.class);
+            example.createCriteria().andEqualTo("orderId",orderId);
+            List<OrderItem> orderItems = orderItemMapper.selectByExample(example);
+
+
+            for (OrderItem orderItem : orderItems) {
+                orderItem.setNum(orderItem.getNum());
+            }
+            skuService.deductionStock(orderItems);
+
+
+            //记录订单日志
+            OrderLog orderLog=new OrderLog();
+            orderLog.setId( idWorker.nextId()+"" );
+            orderLog.setOperater("system");//系统
+            orderLog.setOperateTime(new Date());//操作时间
+            orderLog.setOrderStatus("2");//订单状态
+            orderLog.setPayStatus("0");//支付状态
+            orderLog.setRemarks("支付超时!!");//备注
+            orderLog.setConsignStatus("0");//发货状态
+            orderLog.setOrderId(orderId);
+            orderLogMapper.insert(orderLog);
+        }
+    }
+
+
+    /*****
+     *
+     * 延时消息发送
+     * @param orderId
+     *
+     */
+    public void sendDelayMessage(String orderId){
+        rabbitTemplate.convertAndSend(
+                "exchange.delay.order.begin", "delay", orderId,
+                message -> {
+                    //   设置有效期
+                    message.getMessageProperties().setExpiration(String.valueOf(60000));
+                    return message;
+                });
+    }
     /**
      * 构建查询条件
      * @param searchMap
