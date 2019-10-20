@@ -51,14 +51,14 @@ public class SmsMessageConsumer1 implements MessageListener {
             categoryList.add(categoryService.findById(spu.getCategory2Id()).getName());//二级分类
             categoryList.add(categoryService.findById(spu.getCategory3Id()).getName());//三级分类
 
-            //sku地址列表
-            Map<String, String> urlMap = new HashMap<>();
-            for (Sku sku : skuList) {
-                if ("1".equals(sku.getStatus())) {
-                    String specJson = JSON.toJSONString(JSON.parseObject(sku.getSpec()), SerializerFeature.MapSortField);
-                    urlMap.put(specJson, sku.getId() + ".html");
-                }
+        //sku地址列表
+        Map<String,String> urlMap=new HashMap<>();
+        for(Sku sku:skuList){
+            if("1".equals(sku.getStatus())){
+                String specJson = JSON.toJSONString( JSON.parseObject(sku.getSpec()), SerializerFeature.MapSortField);
+                urlMap.put(specJson,sku.getId()+".html");
             }
+        }
 
             //2.批量生成sku页面
             for (Sku sku : skuList) {
