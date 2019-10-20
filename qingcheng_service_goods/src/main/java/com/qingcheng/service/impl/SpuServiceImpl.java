@@ -9,6 +9,7 @@ import com.qingcheng.pojo.goods.*;
 import com.qingcheng.service.goods.SkuService;
 import com.qingcheng.service.goods.SpuService;
 import com.qingcheng.util.IdWorker;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -21,6 +22,8 @@ public class SpuServiceImpl implements SpuService {
 
     @Autowired
     private SpuMapper spuMapper;
+    @Autowired
+     private RabbitTemplate rabbitTemplate;
 
     /**
      * 返回全部记录
@@ -250,9 +253,34 @@ public class SpuServiceImpl implements SpuService {
         spu.setId(id);
         spu.setIsMarketable("0");
         spuMapper.updateByPrimaryKeySelective(spu);
+
+        rabbitTemplate.convertAndSend("exchange.fanout_pull","",id);
         //2.记录商品日志(学员实现)
 
     }
+
+    /**
+     *   批量下架
+     * @param ids
+     * @return
+     */
+    public int pullMany(String[] ids){
+        Spu spu=new Spu();
+        spu.setIsMarketable("0");
+        Example example=new Example(Spu.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andIn("id",Arrays.asList(ids));
+        criteria.andEqualTo("isMarketable","1");
+        //下架消息处理
+       /* for (String id : ids) {
+            //发送中间消息
+            rabbitTemplate.convertAndSend("exchange.fanout_pull","",id);
+        }*/
+
+
+        return    spuMapper.updateByExampleSelective(spu,example);
+    }
+
 
     /**
      * 商品上架
@@ -266,6 +294,9 @@ public class SpuServiceImpl implements SpuService {
         }
         spu.setIsMarketable("1");
         spuMapper.updateByPrimaryKeySelective(spu);
+
+        rabbitTemplate.convertAndSend("exchange.fanout_push","",id);
+
         //2.记录商品日志（学员实现）
 
     }
@@ -287,6 +318,12 @@ public class SpuServiceImpl implements SpuService {
         criteria.andEqualTo("isMarketable","0");//下架的
         criteria.andEqualTo("status","1");//审核通过的
         int i = spuMapper.updateByExampleSelective(spu, example);
+
+      /*  for (String id : ids) {
+
+            //发送中间消息
+            rabbitTemplate.convertAndSend("exchange.fanout_push","",id);
+        }*/
         //2.添加商品日志。。。。
 
         return i;

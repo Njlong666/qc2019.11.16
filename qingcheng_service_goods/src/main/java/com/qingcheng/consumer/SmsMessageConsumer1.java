@@ -1,19 +1,16 @@
-package com.qingcheng.controller;
+package com.qingcheng.consumer;
 
-import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.fastjson.JSON;
-
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.qingcheng.pojo.goods.Goods;
 import com.qingcheng.pojo.goods.Sku;
 import com.qingcheng.pojo.goods.Spu;
 import com.qingcheng.service.goods.CategoryService;
 import com.qingcheng.service.goods.SpuService;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -26,33 +23,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RestController
-@RequestMapping("/item")
-public class ItemController {
 
-    @Reference
-    private SpuService spuService;
-
-    @Reference
-    private CategoryService categoryService;
-
-    @Value("${pagePath}")
-    private String pagePath;
-
-    @Autowired
-    private TemplateEngine templateEngine;
-
-    @GetMapping("/createPage")
-    public void createPage(String spuId){
-        //http://localhost:9102/item/createPage.do?spuId=2891757189600
+public class SmsMessageConsumer1 implements MessageListener {
+        @Value("${pagePath}")
+        private String pagePath;
+       @Autowired
+         private SpuService spuService;
+       @Autowired
+         private CategoryService categoryService;
+       @Autowired
+        private TemplateEngine templateEngine;
+    public void onMessage(Message message) {
+         //上架,生成静态页
+        byte[] body = message.getBody();
+         String jsonString = new String(body);
 
         //1.查询商品信息
-        Goods goods = spuService.findGoodsById(spuId);
+        Goods goods = spuService.findGoodsById(jsonString);
         // 获取spu信息
         Spu spu = goods.getSpu();
         // 获取sku列表
         List<Sku> skuList = goods.getSkuList();
-
         //查询商品分类
         List<String> categoryList=new ArrayList<>();
         categoryList.add(  categoryService.findById(spu.getCategory1Id()).getName() );//一级分类
@@ -129,11 +120,7 @@ public class ItemController {
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-        }
-
-
     }
 
-
-
+    }
 }
