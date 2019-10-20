@@ -124,7 +124,7 @@
 								<li class="yui3-u-1-8"><span class="sum">{{(cart.item.money/100).toFixed(2)}}</span></li>
 								<li class="yui3-u-1-8">
 									<a @click="addItem(cart.item.skuId,-cart.item.num)" >删除</a><br />
-									<a href="#none">移到收藏</a>
+									<a @click="addCollect(cart.item.skuId,-cart.item.num)">移到收藏</a>
 								</li>
 							</ul>
 						</div>
@@ -483,7 +483,14 @@
 		        axios.get(`/cart/deleteCheckedCart.do`).then(response=>{
 		            this.findCartList();
 				} )
-			}
+			},
+        	addCollect(skuId,num){
+                axios.get(`/collect/addCollect.do?skuId=${skuId}`).then(response=>{
+                    this.addItem(skuId,num);
+                    this.findCartList();
+                    alert("收藏成功");
+            })
+        }
 		}
 	});
 

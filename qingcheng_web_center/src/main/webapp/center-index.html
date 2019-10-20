@@ -88,12 +88,12 @@
 
                     <div class="person-info">
                         <div v-if="user.headPic==null" class="person-photo"><img src="./img/_/photo.png" alt=""></div>
-                        <div v-if="user.headPic!=null" class="person-photo"><img :src="user.headPic" alt=""></div>
+                        <div v-if="user.headPic!=null" class="person-photo"><img style="width: 60px;height: 60px;  border-radius: 300px" :src="user.headPic" alt=""></div>
                         <div class="person-account">
-                            <span v-if="user.nickName==null" class="name">{{user.username}}</span>
-                            <span v-if="user.nickName!=null" class="name">{{user.nickName}}</span>
-                            <span v-if="user.status=='1'" class="safe">账户安全</span>
-                            <span v-if="user.status=='0'" class="safe">账户不安全安全</span>
+                            <span v-if="user.nickName==null" class="name" style="margin-left: 10px">{{user.username}}</span>
+                            <span v-if="user.nickName!=null" class="name" style="margin-left: 10px">{{user.nickName}}</span>
+                            <span v-if="user.status=='1'" class="safe" style="margin-left: 10px">账户安全</span>
+                            <span v-if="user.status=='0'" class="safe" style="margin-left: 10px">账户不安全安全</span>
                         </div>
                         <div class="clearfix"></div>
                     </div>
@@ -175,7 +175,7 @@
                                                 v-if="orderAndItems.order.consignStatus==null"></td>
                                             <td width="10%" class="center" :rowspan="orderAndItems.list.length">
                                                 <ul class="unstyled">
-                                                    <li>¥{{(orderItems.payMoney/100).toFixed(2)}}</li>
+                                                    <li>¥{{(orderAndItems.order.payMoney/100).toFixed(2)}}</li>
                                                     <li>（含运费：￥{{(orderItems.postFee/100).toFixed(2)}}）</li>
                                                 </ul>
                                             </td>

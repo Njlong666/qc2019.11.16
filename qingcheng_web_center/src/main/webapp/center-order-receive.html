@@ -87,12 +87,12 @@
 
                     <div class="person-info">
                         <div v-if="user.headPic==null" class="person-photo"><img src="./img/_/photo.png" alt=""></div>
-                        <div v-if="user.headPic!=null" class="person-photo"><img :src="user.headPic" alt=""></div>
+                        <div v-if="user.headPic!=null" class="person-photo"><img style="width: 60px;height: 60px;  border-radius: 300px" :src="user.headPic" alt=""></div>
                         <div class="person-account">
-                            <span v-if="user.nickName==null" class="name">{{user.username}}</span>
-                            <span v-if="user.nickName!=null" class="name">{{user.nickName}}</span>
-                            <span v-if="user.status=='1'" class="safe">账户安全</span>
-                            <span v-if="user.status=='0'" class="safe">账户不安全安全</span>
+                            <span v-if="user.nickName==null" class="name" style="margin-left: 10px">{{user.username}}</span>
+                            <span v-if="user.nickName!=null" class="name" style="margin-left: 10px">{{user.nickName}}</span>
+                            <span v-if="user.status=='1'" class="safe" style="margin-left: 10px">账户安全</span>
+                            <span v-if="user.status=='0'" class="safe" style="margin-left: 10px">账户不安全安全</span>
                         </div>
                         <div class="clearfix"></div>
                     </div>
@@ -172,7 +172,7 @@
                                             <td width="10%" class="center" :rowspan="orderAndItems.list.length">
                                                 <ul class="unstyled">
                                                     <li>物流派件中</li>
-                                                    <li><a @click="goDetail(orderAndItems.order,orderAndItems.list)" class="btn">订单详情 </a></li>
+                                                    <li><a @click="goDetail(orderAndItems.order.id)" class="btn">订单详情 </a></li>
                                                 </ul>
                                             </td>
                                             <td width="10%" class="center" :colspan="orderAndItems.list.size">
@@ -488,8 +488,8 @@
                     this.getOnesOrderAndItems();
                 });
             },
-            goDetail(order,list) {
-                window.open(`center-order-detail.html?order=${order}&orderItemList=${list}`);
+            goDetail(id) {
+                window.open(`center-order-detail.html?orderId=${id}`);
             }
         }
     });

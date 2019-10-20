@@ -1,5 +1,4 @@
 package com.qingcheng.service.goods;
-
 import com.qingcheng.entity.PageResult;
 import com.qingcheng.pojo.goods.Sku;
 import com.qingcheng.pojo.order.OrderItem;
@@ -28,7 +27,9 @@ public interface SkuService {
 
     public void add(Sku sku);
 
+
     public void update(Sku sku);
+
 
     public void delete(String id);
 
@@ -36,7 +37,6 @@ public interface SkuService {
 
     /**
      * 根据sku id查询价格
-     *
      * @param id
      * @return
      */
@@ -44,22 +44,19 @@ public interface SkuService {
 
     /**
      * 根据sku id 更新商品价格
-     *
      * @param id
      * @param price
      */
-    public void savePriceToRedisById(String id, Integer price);
+    public void savePriceToRedisById(String id,Integer price );
 
     /**
      * 根据sku id 删除商品价格缓存
-     *
      * @param id
      */
     public void deletePriceFromRedis(String id);
 
     /**
      * 批量扣减库存
-     *
      * @param orderItemList
      */
     public boolean deductionStock(List<OrderItem> orderItemList);
@@ -71,8 +68,8 @@ public interface SkuService {
     public List<Sku> getRoundRows(int page);
 
 
-    public List<Sku> findBySpuId(String spuId);
 
+    public List<Sku> findBySpuId(String spuId);
 
 
 }
