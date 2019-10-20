@@ -1,4 +1,5 @@
 package com.qingcheng.service.goods;
+
 import com.qingcheng.entity.PageResult;
 import com.qingcheng.pojo.goods.Sku;
 import com.qingcheng.pojo.order.OrderItem;
@@ -17,19 +18,17 @@ public interface SkuService {
     public PageResult<Sku> findPage(int page, int size);
 
 
-    public List<Sku> findList(Map<String,Object> searchMap);
+    public List<Sku> findList(Map<String, Object> searchMap);
 
 
-    public PageResult<Sku> findPage(Map<String,Object> searchMap,int page, int size);
+    public PageResult<Sku> findPage(Map<String, Object> searchMap, int page, int size);
 
 
     public Sku findById(String id);
 
     public void add(Sku sku);
 
-
     public void update(Sku sku);
-
 
     public void delete(String id);
 
@@ -37,6 +36,7 @@ public interface SkuService {
 
     /**
      * 根据sku id查询价格
+     *
      * @param id
      * @return
      */
@@ -44,19 +44,22 @@ public interface SkuService {
 
     /**
      * 根据sku id 更新商品价格
+     *
      * @param id
      * @param price
      */
-    public void savePriceToRedisById(String id,Integer price );
+    public void savePriceToRedisById(String id, Integer price);
 
     /**
      * 根据sku id 删除商品价格缓存
+     *
      * @param id
      */
     public void deletePriceFromRedis(String id);
 
     /**
      * 批量扣减库存
+     *
      * @param orderItemList
      */
     public boolean deductionStock(List<OrderItem> orderItemList);
@@ -66,11 +69,10 @@ public interface SkuService {
         随机获取几条SKU
      */
     public List<Sku> getRoundRows(int page);
+
+
     public List<Sku> findBySpuId(String spuId);
 
-
-
-    public List<Sku> findBySpuId(String spuId);
 
 
 }

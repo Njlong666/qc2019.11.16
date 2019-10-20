@@ -14,6 +14,7 @@ public class BackMessageConsumer implements MessageListener {
     @Autowired
     private StockBackService stockBackService;
 
+    @Override
     public void onMessage(Message message) {
         try {
             //提取消息
