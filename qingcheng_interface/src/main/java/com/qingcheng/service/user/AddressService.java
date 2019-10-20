@@ -39,5 +39,9 @@ public interface AddressService {
      */
     public List<Address> findByUsername(String username);
 
+    public List<Address> getOnesAddressList(String username);
+
+
+    public Address getAddress(Integer id);
 
 }

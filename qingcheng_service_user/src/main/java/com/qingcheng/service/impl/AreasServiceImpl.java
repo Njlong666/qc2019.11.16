@@ -9,6 +9,7 @@ import com.qingcheng.service.user.AreasService;
 import org.springframework.beans.factory.annotation.Autowired;
 import tk.mybatis.mapper.entity.Example;
 
+import java.awt.geom.Area;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +23,7 @@ public class AreasServiceImpl implements AreasService {
      * 返回全部记录
      * @return
      */
+    @Override
     public List<Areas> findAll() {
         return areasMapper.selectAll();
     }
@@ -32,6 +34,7 @@ public class AreasServiceImpl implements AreasService {
      * @param size 每页记录数
      * @return 分页结果
      */
+    @Override
     public PageResult<Areas> findPage(int page, int size) {
         PageHelper.startPage(page,size);
         Page<Areas> areass = (Page<Areas>) areasMapper.selectAll();
@@ -93,6 +96,15 @@ public class AreasServiceImpl implements AreasService {
      */
     public void delete(String areaid) {
         areasMapper.deleteByPrimaryKey(areaid);
+    }
+
+    @Override
+    public List<Areas> getAreasByCityId(String cityId) {
+        Example example = new Example(Areas.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("cityid",cityId);
+        List<Areas> areas = areasMapper.selectByExample(example);
+        return areas;
     }
 
     /**

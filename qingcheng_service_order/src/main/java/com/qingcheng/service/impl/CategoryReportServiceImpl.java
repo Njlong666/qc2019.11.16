@@ -5,7 +5,6 @@ import com.qingcheng.dao.CategoryReportMapper;
 import com.qingcheng.pojo.order.CategoryReport;
 import com.qingcheng.service.order.CategoryReportService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -40,8 +39,8 @@ public class CategoryReportServiceImpl implements CategoryReportService {
     }
 
     @Override
-    public List<Map> category1Count(String date1, String date2) {
-        return categoryReportMapper.category1Count(date1,date2);
+    public List<Map<String, Object>> category1Count(String date1, String date2) {
+        return categoryReportMapper.getCategoryId1Report(date1,date2);
     }
 
 }

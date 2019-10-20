@@ -2,7 +2,7 @@ package com.qingcheng.consumer;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.fastjson.JSON;
-import com.qingcheng.dao.SeckillGoodsMapper;
+import com.qingcheng.dao.SecKillGoodsMapper;
 import com.qingcheng.pojo.seckill.SeckillGoods;
 import com.qingcheng.pojo.seckill.SeckillOrder;
 import com.qingcheng.service.pay.WeixinPayService;
@@ -27,7 +27,7 @@ public class OrderMessageListener implements MessageListener {
     private WeixinPayService weixinPayService;
 
     @Autowired
-    private SeckillGoodsMapper seckillGoodsMapper;
+    private SecKillGoodsMapper seckillGoodsMapper;
 
     /***
      * 消息监听

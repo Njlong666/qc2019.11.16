@@ -9,6 +9,7 @@ import com.qingcheng.pojo.goods.*;
 import com.qingcheng.service.goods.SkuService;
 import com.qingcheng.service.goods.SpuService;
 import com.qingcheng.util.IdWorker;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -16,12 +17,14 @@ import tk.mybatis.mapper.entity.Example;
 import java.util.*;
 
 @Service(interfaceClass = SpuService.class)
-@SuppressWarnings("unchecked")
+
 public class SpuServiceImpl implements SpuService {
 
     @Autowired
     private SpuMapper spuMapper;
 
+     @Autowired
+      private RabbitTemplate rabbitTemplate;
     /**
      * 返回全部记录
      * @return
@@ -88,7 +91,11 @@ public class SpuServiceImpl implements SpuService {
      * @param spu
      */
     public void update(Spu spu) {
-        spuMapper.updateByPrimaryKeySelective(spu);
+         if("1".equals(spu.getIsMarketable())){
+                put(spu.getId());
+         }else{
+              pull(spu.getId());
+         }
     }
 
     /**
@@ -250,6 +257,8 @@ public class SpuServiceImpl implements SpuService {
         spu.setId(id);
         spu.setIsMarketable("0");
         spuMapper.updateByPrimaryKeySelective(spu);
+
+        rabbitTemplate.convertAndSend("exchange.fanout_pull","",id);
         //2.记录商品日志(学员实现)
 
     }
@@ -265,6 +274,7 @@ public class SpuServiceImpl implements SpuService {
             throw new RuntimeException("此商品未通过审核");
         }
         spu.setIsMarketable("1");
+         rabbitTemplate.convertAndSend("exchange.fanout_push","",id);
         spuMapper.updateByPrimaryKeySelective(spu);
         //2.记录商品日志（学员实现）
 

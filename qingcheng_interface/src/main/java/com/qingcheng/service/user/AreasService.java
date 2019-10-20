@@ -32,4 +32,6 @@ public interface AreasService {
 
     public void delete(String areaid);
 
+    public List<Areas> getAreasByCityId(String cityId);
+
 }

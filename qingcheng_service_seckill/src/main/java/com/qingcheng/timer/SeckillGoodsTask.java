@@ -1,16 +1,14 @@
 package com.qingcheng.timer;
 
-import com.qingcheng.dao.SeckillGoodsMapper;
+import com.qingcheng.dao.SecKillGoodsMapper;
 import com.qingcheng.pojo.seckill.SeckillGoods;
 import com.qingcheng.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import tk.mybatis.mapper.entity.Example;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -27,7 +25,7 @@ public class SeckillGoodsTask {
     private RedisTemplate redisTemplate;
 
     @Autowired
-    private SeckillGoodsMapper seckillGoodsMapper;
+    private SecKillGoodsMapper seckillGoodsMapper;
 
     /*****
      * 30秒执行一次

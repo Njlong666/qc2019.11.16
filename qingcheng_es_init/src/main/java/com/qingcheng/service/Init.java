@@ -5,8 +5,6 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.qingcheng.dao.SkuMapper;
 import com.qingcheng.pojo.goods.Sku;
-import com.qingcheng.service.goods.CategoryService;
-import com.qingcheng.service.goods.SkuService;
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -20,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +57,7 @@ public class Init implements InitializingBean {
 
             //添加SKU
             for (Sku sku:list) {
-                IndexRequest indexRequest=new IndexRequest("qcsku","doc",sku.getId());
+                IndexRequest indexRequest=new IndexRequest("qingchengsku","doc",sku.getId());
                 Map skuMap=new HashMap();
                 skuMap.put("name",sku.getName());
                 skuMap.put("brandName",sku.getBrandName());

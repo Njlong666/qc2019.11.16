@@ -8,22 +8,22 @@ import com.qingcheng.dao.OrderItemMapper;
 import com.qingcheng.dao.OrderLogMapper;
 import com.qingcheng.dao.OrderMapper;
 import com.qingcheng.entity.PageResult;
+import com.qingcheng.entity.Result;
+import com.qingcheng.pojo.center.OrderAndItems;
 import com.qingcheng.pojo.order.Order;
 import com.qingcheng.pojo.order.OrderItem;
 import com.qingcheng.pojo.order.OrderLog;
 import com.qingcheng.service.goods.SkuService;
 import com.qingcheng.service.order.CartService;
 import com.qingcheng.service.order.OrderService;
+import com.qingcheng.service.pay.WeixinPayService;
 import com.qingcheng.util.IdWorker;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -151,7 +151,10 @@ public class OrderServiceImpl implements OrderService {
                 orderItemMapper.insert(orderItem);
             }
 
-            //int x=1/0;
+            //调用延迟消息发送方法
+            sendDelayMessage(order.getId());
+
+
         } catch (Exception e) {
             e.printStackTrace();
             //发送回滚消息
@@ -218,6 +221,295 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
+    /**
+     * 根据用户名查找所有订单及订单详情信息
+     * @param username
+     * @param page
+     * @param size
+     * @return
+     */
+    @Override
+    public PageResult<OrderAndItems> findOnesOrderAndItems(String username, int page, int size) {
+        PageHelper.startPage(page,size);
+        Example example = new Example(Order.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("username",username);
+        criteria.andEqualTo("isDelete","0");
+        example.setOrderByClause("create_time desc");
+        Page<Order> orders = (Page<Order>) orderMapper.selectByExample(example);
+        List<OrderAndItems> list = new ArrayList<>();
+        for (Order order : orders) {
+            Example example1 = new Example(OrderItem.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("orderId",order.getId());
+            List<OrderItem> orderItems = orderItemMapper.selectByExample(example1);
+            OrderAndItems orderAndItems = new OrderAndItems();
+            orderAndItems.setOrder(order);
+            orderAndItems.setList(orderItems);
+            list.add(orderAndItems);
+        }
+        return new PageResult<OrderAndItems>(orders.getTotal(),list);
+    }
+
+    /**
+     * 待付款订单
+     * @param username
+     * @param page
+     * @param size
+     * @return
+     */
+    @Override
+    public PageResult<OrderAndItems> findOnesWaitToPayOrderAndItems(String username, int page, int size) {
+        PageHelper.startPage(page,size);
+        Example example = new Example(Order.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("username",username);
+        criteria.andEqualTo("orderStatus","0");
+        criteria.andEqualTo("isDelete","0");
+        example.setOrderByClause("create_time desc");
+        Page<Order> orders = (Page<Order>) orderMapper.selectByExample(example);
+        List<OrderAndItems> list = new ArrayList<>();
+        for (Order order : orders) {
+            Example example1 = new Example(OrderItem.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("orderId",order.getId());
+            List<OrderItem> orderItems = orderItemMapper.selectByExample(example1);
+            OrderAndItems orderAndItems = new OrderAndItems();
+            orderAndItems.setOrder(order);
+            orderAndItems.setList(orderItems);
+            list.add(orderAndItems);
+        }
+        return new PageResult<OrderAndItems>(orders.getTotal(),list);
+
+    }
+
+    /**
+     * 代发货订单
+     * @param username
+     * @param page
+     * @param size
+     * @return
+     */
+    @Override
+    public PageResult<OrderAndItems> findOnesWaitToSendOrderAndItems(String username, int page, int size) {
+        PageHelper.startPage(page,size);
+        Example example = new Example(Order.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("username",username);
+        criteria.andEqualTo("orderStatus","1");
+        criteria.andEqualTo("isDelete","0");
+        example.setOrderByClause("create_time desc");
+        Page<Order> orders = (Page<Order>) orderMapper.selectByExample(example);
+        List<OrderAndItems> list = new ArrayList<>();
+        for (Order order : orders) {
+            Example example1 = new Example(OrderItem.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("orderId",order.getId());
+            List<OrderItem> orderItems = orderItemMapper.selectByExample(example1);
+            OrderAndItems orderAndItems = new OrderAndItems();
+            orderAndItems.setOrder(order);
+            orderAndItems.setList(orderItems);
+            list.add(orderAndItems);
+        }
+        return new PageResult<OrderAndItems>(orders.getTotal(),list);
+    }
+
+    /**
+     * 待收货
+     * @param username
+     * @param page
+     * @param size
+     * @return
+     */
+    @Override
+    public PageResult<OrderAndItems> findOnesWaitToReceiveOrderAndItems(String username, int page, int size) {
+        PageHelper.startPage(page,size);
+        Example example = new Example(Order.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("username",username);
+        criteria.andEqualTo("orderStatus","2");
+        criteria.andEqualTo("isDelete","0");
+        example.setOrderByClause("create_time desc");
+        Page<Order> orders = (Page<Order>) orderMapper.selectByExample(example);
+        List<OrderAndItems> list = new ArrayList<>();
+        for (Order order : orders) {
+            Example example1 = new Example(OrderItem.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("orderId",order.getId());
+            List<OrderItem> orderItems = orderItemMapper.selectByExample(example1);
+            OrderAndItems orderAndItems = new OrderAndItems();
+            orderAndItems.setOrder(order);
+            orderAndItems.setList(orderItems);
+            list.add(orderAndItems);
+        }
+        return new PageResult<OrderAndItems>(orders.getTotal(),list);
+    }
+
+    /**
+     * 待评价
+     * @param username
+     * @param page
+     * @param size
+     * @return
+     */
+    @Override
+    public PageResult<OrderAndItems> findOnesWaitToEvaluateOrderAndItems(String username, int page, int size) {
+        PageHelper.startPage(page,size);
+        Example example = new Example(Order.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("username",username);
+        criteria.andEqualTo("isDelete","0");
+        criteria.andEqualTo("orderStatus","3");
+        criteria.andEqualTo("buyerRate","0");
+        example.setOrderByClause("create_time desc");
+        Page<Order> orders = (Page<Order>) orderMapper.selectByExample(example);
+        List<OrderAndItems> list = new ArrayList<>();
+        for (Order order : orders) {
+            Example example1 = new Example(OrderItem.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("orderId",order.getId());
+            List<OrderItem> orderItems = orderItemMapper.selectByExample(example1);
+            OrderAndItems orderAndItems = new OrderAndItems();
+            orderAndItems.setOrder(order);
+            orderAndItems.setList(orderItems);
+            list.add(orderAndItems);
+        }
+        return new PageResult<OrderAndItems>(orders.getTotal(),list);
+    }
+
+    /**
+     * 确认收货
+     * @param id
+     * @return
+     */
+    @Override
+    public Result confirmReceive(String id) {
+        try {
+            Order order = new Order();
+            order.setId(id);
+            order.setOrderStatus("3");
+            update(order);
+            return new Result(0,"收货成功!");
+        } catch (Exception e) {
+            return new Result(1,"收货失败!");
+        }
+    }
+
+    /**
+     * 根据订单id查询订单和订单详情
+     * @param id
+     * @return
+     */
+    @Override
+    public OrderAndItems findOrderAndItemsByOrderId(String id) {
+        Order order = orderMapper.selectByPrimaryKey(id);
+        Example example = new Example(OrderItem.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orderId",id);
+        List<OrderItem> orderItems = orderItemMapper.selectByExample(example);
+        OrderAndItems orderAndItems = new OrderAndItems();
+        orderAndItems.setOrder(order);
+        orderAndItems.setList(orderItems);
+        return orderAndItems;
+    }
+
+    @Override
+    public Result removeOrder(String orderId) {
+        try {
+            Order order = orderMapper.selectByPrimaryKey(orderId);
+            order.setIsDelete("1");
+            orderMapper.updateByPrimaryKeySelective(order);
+            return new Result(0,"订单删除成功!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(1,"订单删除失败!");
+        }
+    }
+
+
+    /*****
+     *
+     *      订单超时回滚
+     *
+     * @param orderId
+     */
+    @Reference
+    private WeixinPayService weixinPayService;
+
+    @Override
+    public void rollBackOrder(String orderId) {
+
+
+        // 使用微信查询订单api
+        Map<String,String> map = weixinPayService.queryPayStatus(orderId);
+        System.out.println("///////orderId"+map.get("return_code"));
+        /***
+         * 返回状态码	return_code		SUCCESS
+         * 业务结果	    result_code		SUCCESS
+         * 交易状态	    trade_state     NOTPAY—未支付
+         */
+        if ("SUCCESS".equals(map.get("return_code")) && "SUCCESS".equals(map.get("result_code") ) && "NOTPAY".equals(map.get("trade_state"))){
+            //关闭微信订单
+            Map<String,String> closePay = weixinPayService.closePay(orderId);
+        }
+
+
+        /*****
+         *
+         * 交易状态	    trade_state     CLOSED—已关闭
+         *
+         */
+        if ("SUCCESS".equals(map.get("return_code")) && "SUCCESS".equals(map.get("result_code") ) && "CLOSED".equals(map.get("trade_state"))){
+            //修改以关闭的订单状态
+            Order order = new Order();
+            order.setId(orderId);
+            //订单状态为 4 关闭状态
+            order.setOrderStatus("4");
+            orderMapper.updateByPrimaryKeySelective(order);
+
+
+            //恢复商品表库存
+            Example example = new Example(OrderItem.class);
+            example.createCriteria().andEqualTo("orderId",orderId);
+            List<OrderItem> orderItems = orderItemMapper.selectByExample(example);
+
+
+            for (OrderItem orderItem : orderItems) {
+                orderItem.setNum(orderItem.getNum());
+            }
+            skuService.deductionStock(orderItems);
+
+
+            //记录订单日志
+            OrderLog orderLog=new OrderLog();
+            orderLog.setId( idWorker.nextId()+"" );
+            orderLog.setOperater("system");//系统
+            orderLog.setOperateTime(new Date());//操作时间
+            orderLog.setOrderStatus("2");//订单状态
+            orderLog.setPayStatus("0");//支付状态
+            orderLog.setRemarks("支付超时!!");//备注
+            orderLog.setConsignStatus("0");//发货状态
+            orderLog.setOrderId(orderId);
+            orderLogMapper.insert(orderLog);
+        }
+    }
+
+
+    /*****
+     *
+     * 延时消息发送
+     * @param orderId
+     *
+     */
+    public void sendDelayMessage(String orderId){
+        rabbitTemplate.convertAndSend(
+                "exchange.delay.order.begin", "delay", orderId,
+                message -> {
+                    //   设置有效期
+                    message.getMessageProperties().setExpiration(String.valueOf(60000));
+                    return message;
+                });
+    }
     /**
      * 构建查询条件
      * @param searchMap
