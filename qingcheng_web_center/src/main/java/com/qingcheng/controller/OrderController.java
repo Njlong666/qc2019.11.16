@@ -97,4 +97,14 @@ public class OrderController {
     public Result confirmReceive(String id) {
         return orderService.confirmReceive(id);
     }
+
+    @GetMapping("/getOrderAndItemsByOrderId")
+    public OrderAndItems getOrderAndItemsByOrderId(String id) {
+        return orderService.findOrderAndItemsByOrderId(id);
+    }
+
+    @GetMapping("/removeOrder")
+    public Result removeOrder(String id) {
+        return orderService.removeOrder(id);
+    }
 }

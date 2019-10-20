@@ -9,6 +9,7 @@ import com.qingcheng.service.user.AreasService;
 import org.springframework.beans.factory.annotation.Autowired;
 import tk.mybatis.mapper.entity.Example;
 
+import java.awt.geom.Area;
 import java.util.List;
 import java.util.Map;
 
@@ -93,6 +94,15 @@ public class AreasServiceImpl implements AreasService {
      */
     public void delete(String areaid) {
         areasMapper.deleteByPrimaryKey(areaid);
+    }
+
+    @Override
+    public List<Areas> getAreasByCityId(String cityId) {
+        Example example = new Example(Areas.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("cityid",cityId);
+        List<Areas> areas = areasMapper.selectByExample(example);
+        return areas;
     }
 
     /**

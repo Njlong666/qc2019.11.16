@@ -32,4 +32,6 @@ public interface CitiesService {
 
     public void delete(String cityid);
 
+    public List<Cities> getCitiesByProvinceId(String provinceId);
+
 }

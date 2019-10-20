@@ -183,13 +183,13 @@
                                             <td width="10%" class="center" :rowspan="orderAndItems.list.length">
                                                 <ul class="unstyled">
                                                     <li>等待买家付款</li>
-                                                    <li><a href="#" class="btn">订单详情 </a></li>
+                                                    <li><a @click="goDetail(orderAndItems.order,orderAndItems.list)" class="btn">订单详情 </a></li>
                                                 </ul>
                                             </td>
                                             <td width="10%" class="center" :rowspan="orderAndItems.list.length">
                                                 <ul class="unstyled">
                                                     <li><a @click="goPay(orderAndItems.order.id,orderAndItems.order.payMoney)" href="javascript:void(0)" class="sui-btn btn-info">立即付款</a></li>
-                                                    <li>取消订单</li>
+                                                    <li><a @click="removeOrder(orderAndItems.order.id)">取消订单</a></li>
                                                 </ul>
                                             </td>
                                         </tr>
@@ -501,6 +501,19 @@
             },
             goPay(id,money) {
                 location.href = `https://qingcheng.utools.club/pay.html?ordersn=${id}&money=${money}`;
+            },
+            goDetail(order,list) {
+                window.open(`center-order-detail.html?order=${order}&orderItemList=${list}`);
+            },
+            removeOrder(id) {
+                let flag = confirm("确定删除该订单吗?");
+                if(flag) {
+                    axios.get(`orderCenter/removeOrder.do?id=${id}`).then(response => {
+                        alert(response.data.message);
+                        this.getOnesOrderAndItems();
+                    });
+                }
+
             }
         }
     });

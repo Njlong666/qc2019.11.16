@@ -95,6 +95,15 @@ public class CitiesServiceImpl implements CitiesService {
         citiesMapper.deleteByPrimaryKey(cityid);
     }
 
+    @Override
+    public List<Cities> getCitiesByProvinceId(String provinceId) {
+        Example example = new Example(Cities.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("provinceid",provinceId);
+        List<Cities> cities = citiesMapper.selectByExample(example);
+        return cities;
+    }
+
     /**
      * 构建查询条件
      * @param searchMap

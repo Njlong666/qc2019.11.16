@@ -25,9 +25,7 @@
                         <ul class="fl">
                             <li class="f-item">青橙欢迎您！</li>
                             <li class="f-item">请<a href="login.html" target="_blank">登录</a>　<span><a
-                                    href="register.html"
-                                    target="_blank">免费注册</a></span>
-                            </li>
+                                    href="register.html" target="_blank">免费注册</a></span></li>
                         </ul>
                         <div class="fr typelist">
                             <ul class="types">
@@ -131,41 +129,41 @@
                                         </div>
                                         <label>
                                             <span>提交订单</span>
-                                            <span>{{order.createTime}}</span>
+                                            <span>{{orderAndItems.order.createTime}}</span>
                                         </label>
                                     </div>
-                                    <div :class="order.orderStatus>=1?'current':'todo'">
+                                    <div :class="orderAndItems.order.orderStatus!='0'?'current':'todo'">
                                         <div class="wrap">
                                             <div class="round">2</div>
                                             <div class="bar"></div>
                                         </div>
                                         <label>
                                             <span>付款成功</span>
-                                            <span v-if="order.orderStatus>=1">{{order.payTime}}</span>
+                                            <span v-if="orderAndItems.order.orderStatus!='0'">{{orderAndItems.order.payTime}}</span>
                                         </label>
                                     </div>
-                                    <div :class="order.orderStatus>=2?'current':'todo'">
+                                    <div :class="(orderAndItems.order.orderStatus!='0'&&orderAndItems.order.orderStatus!='1')?'current':'todo'">
                                         <div class="wrap">
                                             <div class="round">3</div>
                                             <div class="bar"></div>
                                         </div>
                                         <label>
                                             <span>发货</span>
-                                            <span v-if="order.orderStatus>=2">{order.consignTime}</span>
+                                            <span v-if="orderAndItems.order.orderStatus!='0'&&orderAndItems.order.orderStatus!='1'">{{orderAndItems.order.consignTime}}</span>
                                         </label>
                                     </div>
-                                    <div :class="order.orderStatus>=3?'current':'todo'">
+                                    <div :class="(orderAndItems.order.orderStatus!='0'&&orderAndItems.order.orderStatus!='1'&&orderAndItems.order.orderStatus!='2')?'current':'todo'">
                                         <div class="wrap">
                                             <div class="round">4</div>
                                             <div class="bar"></div>
                                         </div>
                                         <label>
                                             <span>确认收货</span>
-                                            <span v-if="order.orderStatus>=3">{{order.endTime}}</span>
+                                            <span v-if="(orderAndItems.order.orderStatus!='0'&&orderAndItems.order.orderStatus!='1'&&orderAndItems.order.orderStatus!='2')">{{orderAndItems.order.endTime}}</span>
                                         </label>
                                     </div>
 
-                                    <div :class="order.buyerRate=='1'?'current':'todo last'">
+                                    <div :class="orderAndItems.order.buyerRate=='1'?'current':'todo last'">
                                         <div class="wrap">
                                             <div class="round">5</div>
                                         </div>
@@ -177,22 +175,24 @@
                             </div>
                             <div class="order-state">
                                 <p>当前订单状态：
-                                    <span class="red" v-if="order.orderStatus=='0'">待付款</span>
-                                    <span class="red" v-if="order.orderStatus=='1'">待发货</span>
-                                    <span class="red" v-if="order.orderStatus=='2'">已发货</span>
-                                    <span class="red" v-if="order.orderStatus=='3'">已完成</span>
+                                    <span v-if="orderAndItems.order.orderStatus=='0'" class="red">待付款</span>
+                                    <span v-if="orderAndItems.order.orderStatus=='1'" class="red">待发货</span>
+                                    <span v-if="orderAndItems.order.orderStatus=='2'" class="red">已发货</span>
+                                    <span v-if="orderAndItems.order.orderStatus=='3'" class="red">已完成</span>
                                 </p>
                             </div>
                         </div>
                         <div class="order-info">
                             <h5>订单信息</h5>
-                            <p>收货地址：{{order.receiverAddress}} </p>
-                            <p>订单单号：{{order.id}}</p>
-                            <p>下单时间：{{order.createTime}}</p>
-                            <p>支付时间：{{order.PayTime}}</p>
-                            <p v-if="order.payType=='1'">支付方式：在线支付</p>
-                            <p v-if="order.payType==''2">支付方式：货到付款</p>
-                            <p>发货时间：{{order.consignTime}}</p>
+                            <p>收货地址：{{orderAndItems.order.receiverAddress}} </p>
+                            <p>订单单号：{{orderAndItems.order.id}}</p>
+                            <p>下单时间：{{orderAndItems.order.createTime}}</p>
+                            <p>支付时间：{{orderAndItems.order.payTime}}</p>
+                            <p v-if="orderAndItems.order.payType=='0'">支付方式：货到付款</p>
+                            <p v-if="orderAndItems.order.payType=='1'">支付方式：微信支付</p>
+                            <p v-if="orderAndItems.order.payType=='2'">支付方式：支付宝</p>
+                            <p v-if="orderAndItems.order.payType=='3'">支付方式：银联支付</p>
+                            <p>发货时间：{{orderAndItems.order.consignTime}}</p>
                         </div>
                         <div class="order-goods">
                             <table class="sui-table">
@@ -206,18 +206,17 @@
 
                                 <tbody>
                                 <tr>
-                                    <td colspan="5">订单编号：{{order.id}}</td>
+                                    <td colspan="5">订单编号：{{orderAndItems.order.id}}</td>
                                 </tr>
-                                <tr v-for="orderItem in orderItemList">
+                                <tr v-for="orderItem in orderAndItems.list">
                                     <td>
-                                        <div class="typographic">
-                                            <img :src="orderItem.image"/>
+                                        <div class="typographic"><img width="150px" height="150px" :src="orderItem.image"/>
                                             <span>{{orderItem.name}}</span>
                                         </div>
                                     </td>
                                     <td>
                                         <ul class="unstyled">
-                                            <li>¥{{((orderItem.price)/100).toFixed(2)}}</li>
+                                            <li>¥{{(orderItem.price/100).toFixed(2)}}</li>
                                         </ul>
                                     </td>
                                     <td>{{orderItem.num}}</td>
@@ -227,10 +226,10 @@
                                 </tbody>
                             </table>
                             <div class="order-price">
-                                <p>商品总金额：￥{{order.totalMoney}}</p>
-                                <p>运费金额：{{order.postFee}}</p>
+                                <p>商品总金额：￥{{(orderAndItems.order.totalMoney/100).toFixed(2)}}</p>
+                                <p>运费金额: ￥{{(orderAndItems.order.postFee/100).toFixed(2)}}</p>
                                 <p>使用优惠券：无</p>
-                                <h4 class="red">实际支付：￥{{order.payMoney}}</h4>
+                                <h4 class="red">实际支付：￥{{(orderAndItems.order.payMoney/100).toFixed(2)}}</h4>
                             </div>
                             <div class="clearfix"></div>
                         </div>
@@ -461,6 +460,8 @@
     <!--页面底部END-->
 
 </div>
+
+
 </body>
 
 <script src="js/vue.js"></script>
@@ -472,18 +473,20 @@
         data() {
             return {
                 user: {},
-                order: {},
-                orderItemList: []
+                orderAndItems: {}
             }
         },
         created() {
-            let order = getQueryString("order");
-            let orderItemList = getQueryString("orderItemList");
-            this.order = order;
-            this.orderItemList = orderItemList;
+            this.getOrderAndItemsByOrderId();
             this.getOnesMessage();
         },
         methods: {
+            getOrderAndItemsByOrderId() {
+                let orderId = getQueryString("orderId");
+                axios.get(`orderCenter/getOrderAndItemsByOrderId.do?id=${orderId}`).then(response => {
+                    this.orderAndItems = response.data;
+                })
+            },
             getOnesMessage() {
                 axios.get('/userCenter/message.do').then(response => {
                     this.user = response.data;

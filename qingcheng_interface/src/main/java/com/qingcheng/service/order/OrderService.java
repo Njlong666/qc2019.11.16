@@ -90,4 +90,9 @@ public interface OrderService {
 
 
     public Result confirmReceive(String id);
+
+
+    public OrderAndItems findOrderAndItemsByOrderId(String id);
+
+    public Result removeOrder(String orderId);
 }

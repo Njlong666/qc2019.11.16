@@ -230,6 +230,7 @@ public class OrderServiceImpl implements OrderService {
         Example example = new Example(Order.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("username",username);
+        criteria.andEqualTo("isDelete","0");
         example.setOrderByClause("create_time desc");
         Page<Order> orders = (Page<Order>) orderMapper.selectByExample(example);
         List<OrderAndItems> list = new ArrayList<>();
@@ -260,6 +261,7 @@ public class OrderServiceImpl implements OrderService {
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("username",username);
         criteria.andEqualTo("orderStatus","0");
+        criteria.andEqualTo("isDelete","0");
         example.setOrderByClause("create_time desc");
         Page<Order> orders = (Page<Order>) orderMapper.selectByExample(example);
         List<OrderAndItems> list = new ArrayList<>();
@@ -291,6 +293,7 @@ public class OrderServiceImpl implements OrderService {
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("username",username);
         criteria.andEqualTo("orderStatus","1");
+        criteria.andEqualTo("isDelete","0");
         example.setOrderByClause("create_time desc");
         Page<Order> orders = (Page<Order>) orderMapper.selectByExample(example);
         List<OrderAndItems> list = new ArrayList<>();
@@ -321,6 +324,7 @@ public class OrderServiceImpl implements OrderService {
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("username",username);
         criteria.andEqualTo("orderStatus","2");
+        criteria.andEqualTo("isDelete","0");
         example.setOrderByClause("create_time desc");
         Page<Order> orders = (Page<Order>) orderMapper.selectByExample(example);
         List<OrderAndItems> list = new ArrayList<>();
@@ -350,6 +354,7 @@ public class OrderServiceImpl implements OrderService {
         Example example = new Example(Order.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("username",username);
+        criteria.andEqualTo("isDelete","0");
         criteria.andEqualTo("orderStatus","3");
         criteria.andEqualTo("buyerRate","0");
         example.setOrderByClause("create_time desc");
@@ -383,6 +388,37 @@ public class OrderServiceImpl implements OrderService {
             return new Result(0,"收货成功!");
         } catch (Exception e) {
             return new Result(1,"收货失败!");
+        }
+    }
+
+    /**
+     * 根据订单id查询订单和订单详情
+     * @param id
+     * @return
+     */
+    @Override
+    public OrderAndItems findOrderAndItemsByOrderId(String id) {
+        Order order = orderMapper.selectByPrimaryKey(id);
+        Example example = new Example(OrderItem.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orderId",id);
+        List<OrderItem> orderItems = orderItemMapper.selectByExample(example);
+        OrderAndItems orderAndItems = new OrderAndItems();
+        orderAndItems.setOrder(order);
+        orderAndItems.setList(orderItems);
+        return orderAndItems;
+    }
+
+    @Override
+    public Result removeOrder(String orderId) {
+        try {
+            Order order = orderMapper.selectByPrimaryKey(orderId);
+            order.setIsDelete("1");
+            orderMapper.updateByPrimaryKeySelective(order);
+            return new Result(0,"订单删除成功!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(1,"订单删除失败!");
         }
     }
 
