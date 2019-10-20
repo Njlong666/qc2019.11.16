@@ -83,5 +83,5 @@ public class SmsMessageConsumer2 implements MessageListener {
 
          }
 
-     }
+    }
 }
