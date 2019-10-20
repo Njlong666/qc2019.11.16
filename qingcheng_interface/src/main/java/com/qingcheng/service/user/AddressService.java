@@ -1,5 +1,6 @@
 package com.qingcheng.service.user;
 import com.qingcheng.entity.PageResult;
+import com.qingcheng.entity.Result;
 import com.qingcheng.pojo.user.Address;
 
 import java.util.*;
@@ -43,5 +44,7 @@ public interface AddressService {
 
 
     public Address getAddress(Integer id);
+
+    public Result setDefault(String username, Integer id);
 
 }

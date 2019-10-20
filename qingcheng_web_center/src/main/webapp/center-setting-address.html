@@ -83,12 +83,12 @@
 
                     <div class="person-info">
                         <div v-if="user.headPic==null" class="person-photo"><img src="./img/_/photo.png" alt=""></div>
-                        <div v-if="user.headPic!=null" class="person-photo"><img :src="user.headPic" alt=""></div>
+                        <div v-if="user.headPic!=null" class="person-photo"><img style="width: 60px;height: 60px;  border-radius: 300px" :src="user.headPic" alt=""></div>
                         <div class="person-account">
-                            <span v-if="user.nickName==null" class="name">{{user.username}}</span>
-                            <span v-if="user.nickName!=null" class="name">{{user.nickName}}</span>
-                            <span v-if="user.status=='1'" class="safe">账户安全</span>
-                            <span v-if="user.status=='0'" class="safe">账户不安全安全</span>
+                            <span v-if="user.nickName==null" class="name" style="margin-left: 10px">{{user.username}}</span>
+                            <span v-if="user.nickName!=null" class="name" style="margin-left: 10px">{{user.nickName}}</span>
+                            <span v-if="user.status=='1'" class="safe" style="margin-left: 10px">账户安全</span>
+                            <span v-if="user.status=='0'" class="safe" style="margin-left: 10px">账户不安全安全</span>
                         </div>
                         <div class="clearfix"></div>
                     </div>
@@ -123,7 +123,7 @@
                         <div class="address-title">
                             <span class="title">地址管理</span>
                             <a data-toggle="modal" data-target=".edit" data-keyboard="false"
-                               class="sui-btn  btn-info add-new" @click="formVisible=true;address={}">添加新地址</a>
+                               class="sui-btn  btn-info add-new" @click="formVisible=true;address={alias:''}">添加新地址</a>
                             <span class="clearfix"></span>
                         </div>
                         <div class="address-detail">
@@ -143,9 +143,9 @@
                                     <td>{{addr.phone}}</td>
                                     <td>
                                         <a @click="edit(addr.id)">编辑</a>
-                                        <a @click="remove(addr.id)">删除</a>
+                                        <a v-if="addr.isDefault!='1'" @click="remove(addr.id)">删除</a>
                                         <span v-if="addr.isDefault=='1'">默认地址</span>
-                                        <span v-if="addr.isDefault!='1'"><a href="#">设为默认</a></span>
+                                        <span v-if="addr.isDefault!='1'"><a @click="setDefault(addr.id)">设为默认</a></span>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -157,7 +157,7 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-body">
-                                            <form action="" class="sui-form form-horizontal">
+                                            <form class="sui-form form-horizontal">
                                                 <div class="control-group">
                                                     <label class="control-label">收货人：</label>
                                                     <div class="controls">
@@ -238,7 +238,7 @@
 
 
                                         </div>
-                                        <div class="modal-footer">
+                                        <div class="modal-footer" style="margin-left: 50px">
                                             <button @click="save()" type="button" data-ok="modal"
                                                     class="sui-btn btn-primary btn-large">确定
                                             </button>
@@ -414,7 +414,7 @@
         },
         created() {
             this.getOnesMessage();
-            this.getAddress();
+            this.getAddressList();
             this.getProvinces();
         },
         methods: {
@@ -429,18 +429,16 @@
                 });
             },
             getCities() {
-                this.cities = [];
                 axios.get(`/userCenter/cities.do?provinceId=${this.address.provinceid}`).then(response => {
                     this.cities = response.data;
                 });
             },
             getAreas() {
-                this.areas = [];
                 axios.get(`/userCenter/areas.do?cityId=${this.address.cityid}`).then(response => {
                     this.areas = response.data;
                 });
             },
-            getAddress() {
+            getAddressList() {
                 axios.get('/userCenter/getAddressList.do').then(response => {
                     this.addressList = response.data;
                 });
@@ -449,18 +447,35 @@
                 this.formVisible = true;
                 axios.get(`/userCenter/getAddress.do?id=${id}`).then(response => {
                     this.address = response.data;
+                    this.getCities();
+                    this.getAreas();
                 });
             },
-            delete(id) {
+            save() {
+                axios.post(`/userCenter/${this.address.id==null?'saveAddress':'updateAddress'}.do`,this.address).then(response => {
+                    alert(response.data.message);
+                    this.getAddressList();
+                    this.formVisible = false;
+                });
+            },
+            remove(id) {
                 this.$confirm('确定要删除此记录吗?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
                     axios.get(`/userCenter/removeAddress.do?id=${id}`).then(response => {
+                        alert(response.data.message);
                         this.getAddress(); //刷新列表
                     })
-                })
+                });
+                this.getAddressList();
+            },
+            setDefault(id) {
+                axios.get(`/userCenter/setIsDefault.do?id=${id}`).then(response => {
+                    alert(response.data.message);
+                });
+                this.getAddressList();
             }
         }
     });

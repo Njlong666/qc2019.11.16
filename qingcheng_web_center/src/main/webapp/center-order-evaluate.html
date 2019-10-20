@@ -87,12 +87,12 @@
 
                     <div class="person-info">
                         <div v-if="user.headPic==null" class="person-photo"><img src="./img/_/photo.png" alt=""></div>
-                        <div v-if="user.headPic!=null" class="person-photo"><img :src="user.headPic" alt=""></div>
+                        <div v-if="user.headPic!=null" class="person-photo"><img style="width: 60px;height: 60px;  border-radius: 300px" :src="user.headPic" alt=""></div>
                         <div class="person-account">
-                            <span v-if="user.nickName==null" class="name">{{user.username}}</span>
-                            <span v-if="user.nickName!=null" class="name">{{user.nickName}}</span>
-                            <span v-if="user.status=='1'" class="safe">账户安全</span>
-                            <span v-if="user.status=='0'" class="safe">账户不安全安全</span>
+                            <span v-if="user.nickName==null" class="name" style="margin-left: 10px">{{user.username}}</span>
+                            <span v-if="user.nickName!=null" class="name" style="margin-left: 10px">{{user.nickName}}</span>
+                            <span v-if="user.status=='1'" class="safe" style="margin-left: 10px">账户安全</span>
+                            <span v-if="user.status=='0'" class="safe" style="margin-left: 10px">账户不安全安全</span>
                         </div>
                         <div class="clearfix"></div>
                     </div>
@@ -461,7 +461,10 @@
         data() {
             return {
                 user: {},
-                orderAndItemsList: []
+                orderAndItemsList: [],
+                page: 1,
+                size: 2,
+                total: 10
             }
         },
         created() {
@@ -476,8 +479,9 @@
                 })
             },
             getOnesOrderAndItems() {
-                axios.get('/orderCenter/getWaitToEvaluateOrders.do').then(response => {
+                axios.get(`/orderCenter/getWaitToEvaluateOrders.do?page=${this.page}&size=${this.size}`).then(response => {
                     this.orderAndItemsList = response.data.rows;
+                    this.total = response.data.total;
                 });
             },
             goDetail(id) {
