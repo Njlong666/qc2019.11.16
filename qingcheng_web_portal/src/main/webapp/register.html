@@ -82,7 +82,7 @@
 						<label class="control-label">手机号：</label>
 						<div class="controls">
 							<input type="text" placeholder="请输入你的手机号" class="input-xfat input-xlarge" v-model="pojo.phone">
-							<a @click="sendSms()">发送短信验证码</a>
+							<a @click="sendSms()"  v-model="getCode" id="getCode">发送短信验证码</a>
 						</div>
 					</div>
 					<div class="control-group">
@@ -160,6 +160,21 @@
 		        axios.get(`/user/sendSms.do?phone=${this.pojo.phone}`).then(response=>{
 		            alert(response.data.message);
 				} )
+				/*	 <!--原生js-->*/
+				var time = document.getElementById("time");
+				var getCode = document.getElementById("getCode");
+				getCode.innerHTML="";
+				var number=60;
+				function fun(){
+					number--;
+					time.innerHTML=(number+"s后重新获取");
+					if(number<=0){
+						getCode.innerHTML="获取验证码";
+						window.clearInterval(timer)
+						time.innerHTML="";
+					}
+				}
+				var timer=window.setInterval(fun, 1000);
 			},
 			save(){
 		        if(this.password!=this.pojo.password){
