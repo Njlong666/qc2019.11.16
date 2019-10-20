@@ -1,6 +1,7 @@
 package com.qingcheng.controller.order;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.qingcheng.controller.POIUtils.POIUtil;
 import com.qingcheng.entity.PageResult;
 import com.qingcheng.pojo.order.Order;
 import com.qingcheng.service.order.OrderService;
@@ -60,4 +61,10 @@ public class OrderController {
         return new Result();
     }
 
+    @PostMapping("/export")
+    public Result export(@RequestBody Map<String,Object> searchMap){
+        List<Order> order = orderService.findList(searchMap);
+        POIUtil.getExcel(order);
+        return new Result();
+    }
 }

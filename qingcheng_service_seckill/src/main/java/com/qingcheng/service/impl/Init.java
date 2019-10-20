@@ -1,7 +1,8 @@
 package com.qingcheng.service.impl;
 
 import com.alibaba.dubbo.config.annotation.Reference;
-import com.qingcheng.dao.SecKillGoodsMapper;
+
+import com.qingcheng.dao.SeckillGoodsMapper1;
 import com.qingcheng.pojo.goods.Sku;
 import com.qingcheng.pojo.seckill.SeckillGoods;
 import com.qingcheng.service.goods.SkuService;
@@ -16,7 +17,7 @@ import java.util.*;
 public class Init implements InitializingBean {
 
     @Autowired
-    private SecKillGoodsMapper seckillGoodsMapper;
+    private SeckillGoodsMapper1 seckillGoodsMapper;
 
     @Reference
     private SkuService skuService;
