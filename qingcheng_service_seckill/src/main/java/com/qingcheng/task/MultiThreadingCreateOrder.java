@@ -1,7 +1,8 @@
 package com.qingcheng.task;
 
 import com.alibaba.fastjson.JSON;
-import com.qingcheng.dao.SecKillGoodsMapper;
+
+import com.qingcheng.dao.SeckillGoodsMapper1;
 import com.qingcheng.pojo.seckill.SeckillGoods;
 import com.qingcheng.pojo.seckill.SeckillOrder;
 import com.qingcheng.util.IdWorker;
@@ -29,7 +30,7 @@ public class MultiThreadingCreateOrder {
     private RedisTemplate redisTemplate;
 
     @Autowired
-    private SecKillGoodsMapper seckillGoodsMapper;
+    private SeckillGoodsMapper1 seckillGoodsMapper;
 
     @Autowired
     private IdWorker idWorker;

@@ -194,6 +194,14 @@ public class SkuServiceImpl implements SkuService {
         return res;
     }
 
+    @Override
+    public List<Sku> findBySpuId(String spuId) {
+        Example example= new Example(Sku.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("spuId",spuId);
+        return  skuMapper.selectByExample(example);
+    }
+
 
 
     /**
