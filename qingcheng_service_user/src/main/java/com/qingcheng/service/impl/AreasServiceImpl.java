@@ -23,6 +23,7 @@ public class AreasServiceImpl implements AreasService {
      * 返回全部记录
      * @return
      */
+    @Override
     public List<Areas> findAll() {
         return areasMapper.selectAll();
     }
@@ -33,6 +34,7 @@ public class AreasServiceImpl implements AreasService {
      * @param size 每页记录数
      * @return 分页结果
      */
+    @Override
     public PageResult<Areas> findPage(int page, int size) {
         PageHelper.startPage(page,size);
         Page<Areas> areass = (Page<Areas>) areasMapper.selectAll();
