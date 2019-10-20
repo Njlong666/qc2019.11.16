@@ -125,12 +125,12 @@
 
                     <div class="person-info">
                         <div v-if="user.headPic==null" class="person-photo"><img src="./img/_/photo.png" alt=""></div>
-                        <div v-if="user.headPic!=null" class="person-photo"><img :src="user.headPic" alt=""></div>
+                        <div v-if="user.headPic!=null" class="person-photo"><img style="width: 60px;height: 60px;  border-radius: 300px" :src="user.headPic" alt=""></div>
                         <div class="person-account">
-                            <span v-if="user.nickName==null" class="name">{{user.username}}</span>
-                            <span v-if="user.nickName!=null" class="name">{{user.nickName}}</span>
-                            <span v-if="user.status=='1'" class="safe">账户安全</span>
-                            <span v-if="user.status=='0'" class="safe">账户不安全安全</span>
+                            <span v-if="user.nickName==null" class="name" style="margin-left: 10px">{{user.username}}</span>
+                            <span v-if="user.nickName!=null" class="name" style="margin-left: 10px">{{user.nickName}}</span>
+                            <span v-if="user.status=='1'" class="safe" style="margin-left: 10px">账户安全</span>
+                            <span v-if="user.status=='0'" class="safe" style="margin-left: 10px">账户不安全安全</span>
                         </div>
                         <div class="clearfix"></div>
                     </div>
@@ -169,7 +169,7 @@
                             <form>
                                 <div class="message">
                                     <label for="nickName">昵称:</label>
-                                    <input type="text" v-model="user.nickName" id="nickName">
+                                    <input type="text" v-model="nickName" id="nickName">
                                 </div>
 
                                 <div class="message">
@@ -196,13 +196,13 @@
 
                                     <div style="margin-left:70px;margin-top: 20px">
                                         <el-select v-model="city" placeholder="请选择市" @change="getAreas()">
-                                        <el-option
-                                                v-for="city in cities"
-                                                :key="city.cityid"
-                                                :label="city.city"
-                                                :value="city.cityid">
-                                        </el-option>
-                                    </el-select>
+                                            <el-option
+                                                    v-for="city in cities"
+                                                    :key="city.cityid"
+                                                    :label="city.city"
+                                                    :value="city.cityid">
+                                            </el-option>
+                                        </el-select>
                                     </div>
 
                                     <div style="margin-left: 70px;margin-top: 20px">
@@ -402,7 +402,8 @@
                 city:'',
                 area:'',
                 address:'',
-                imageUrl:''
+                imageUrl:'',
+                nickName:''
             }
         },
         created() {
@@ -428,6 +429,7 @@
                 });
             },
             save() {
+                this.user.nickname = this.nickName;
                 this.user.headPic = this.imageUrl;
                 axios.post('/userCenter/updateMsg.do',this.user).then(response => {
                     alert(response.data.message);
@@ -438,6 +440,7 @@
                 axios.get('/userCenter/message.do').then(response => {
                     this.user = response.data;
                     this.imageUrl = this.user.headPic;
+                    this.nickName = this.user.nickName;
                 })
             },
             handleAvatarSuccess(res, file) {

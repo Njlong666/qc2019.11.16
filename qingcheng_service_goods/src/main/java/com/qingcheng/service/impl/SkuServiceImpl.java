@@ -107,7 +107,6 @@ public class SkuServiceImpl implements SkuService {
     }
 
 
-
     @Autowired
     private RedisTemplate redisTemplate;
 
@@ -194,6 +193,7 @@ public class SkuServiceImpl implements SkuService {
 
         return res;
     }
+
 
 
     /**

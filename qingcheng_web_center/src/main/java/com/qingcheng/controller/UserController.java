@@ -3,15 +3,18 @@ package com.qingcheng.controller;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.aliyun.oss.OSSClient;
 import com.qingcheng.entity.Result;
+import com.qingcheng.pojo.system.Admin;
 import com.qingcheng.pojo.user.*;
 import com.qingcheng.service.user.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -110,6 +113,66 @@ public class UserController {
         } catch (Exception e) {
             e.printStackTrace();
             return new Result(1,"地址删除失败");
+        }
+    }
+
+    @PostMapping("/saveAddress")
+    public Result saveAddress(@RequestBody Address address) {
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        try {
+            address.setUsername(name);
+            addressService.add(address);
+            return new Result(0,"地址添加成功!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(1,"地址添加失败!");
+        }
+    }
+
+    @PostMapping("/updateAddress")
+    public Result updateAddress(@RequestBody Address address) {
+        try {
+            addressService.update(address);
+            return new Result(0,"数据修改成功!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(1,"数据修改失败!");
+        }
+    }
+
+    @GetMapping("/setIsDefault")
+    public Result setIsDefault(Integer id) {
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        Result result = addressService.setDefault(name, id);
+        return result;
+    }
+
+    @PostMapping("/updatePwd")
+    public Result updatePwd(@RequestBody Map<String, String> msgMap) {
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        String oldPwd = msgMap.get("oldPwd");
+        String newPwd1 = msgMap.get("newPwd1");
+        String newPwd2 = msgMap.get("newPwd2");
+        User user = userService.findById(name);
+        String password = user.getPassword();
+        boolean flag = BCrypt.checkpw(oldPwd, password);
+        if (flag) {
+            //原密码输入正确
+            if (newPwd1.equals(newPwd2)) {
+                //新密码正确
+                //修改数据库
+                String gensalt = BCrypt.gensalt();
+                String newPassword = BCrypt.hashpw(newPwd1, gensalt);
+                user.setPassword(newPassword);
+                userService.update(user);
+                return new Result(0, "密码修改成功!");
+            } else {
+                //新密码不一致
+                return new Result(1, "新密码不一致!");
+            }
+        } else {
+            //原密码错误
+            return new Result(1, "原密码输入错误!");
         }
     }
 }

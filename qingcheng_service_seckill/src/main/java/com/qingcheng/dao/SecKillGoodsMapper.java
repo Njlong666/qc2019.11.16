@@ -5,8 +5,7 @@ import tk.mybatis.mapper.common.Mapper;
 
 /**
  * @author: lenovo
- * @Date: 2019/10/16 19:12
+ * @Date: 2019/10/20 22:12
  */
-public interface SecKillGoodsMapper extends Mapper<SeckillGoods>{
-
+public interface SecKillGoodsMapper extends Mapper<SeckillGoods> {
 }
