@@ -22,19 +22,23 @@ public class SmsMessageConsumer3 implements MessageListener {
      private  String pagePath;
     @Override
     public void onMessage(Message message) {
-       //下架，静态页面删除
-        byte[] body = message.getBody();
-        String jsonString = new String(body);
+        try {
+            //下架，静态页面删除
+            byte[] body = message.getBody();
+            String jsonString = new String(body);
 
-           //查到所有sku
-        List<Sku> skus = skuService.findBySpuId(jsonString);
-         /*io流的使用*/
-          for(Sku sku:skus){
-              File file=new File(pagePath,sku.getId()+".html");
-              if(file.exists()&&file.isFile()){
-                  file.delete();
-              }
-          }
+            //查到所有sku
+            List<Sku> skus = skuService.findBySpuId(jsonString);
+            /*io流的使用*/
+            for(Sku sku:skus){
+                File file=new File(pagePath,sku.getId()+".html");
+                if(file.exists()&&file.isFile()){
+                    file.delete();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 }

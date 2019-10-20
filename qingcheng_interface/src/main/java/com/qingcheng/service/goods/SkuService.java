@@ -66,5 +66,6 @@ public interface SkuService {
         随机获取几条SKU
      */
     public List<Sku> getRoundRows(int page);
+    public List<Sku> findBySpuId(String spuId);
 
 }
