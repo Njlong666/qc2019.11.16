@@ -8,6 +8,8 @@ import com.qingcheng.dao.OrderItemMapper;
 import com.qingcheng.dao.OrderLogMapper;
 import com.qingcheng.dao.OrderMapper;
 import com.qingcheng.entity.PageResult;
+import com.qingcheng.entity.Result;
+import com.qingcheng.pojo.center.OrderAndItems;
 import com.qingcheng.pojo.order.Order;
 import com.qingcheng.pojo.order.OrderItem;
 import com.qingcheng.pojo.order.OrderLog;
@@ -20,10 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -216,6 +215,211 @@ public class OrderServiceImpl implements OrderService {
         }
 
 
+    }
+
+    /**
+     * 根据用户名查找所有订单及订单详情信息
+     * @param username
+     * @param page
+     * @param size
+     * @return
+     */
+    @Override
+    public PageResult<OrderAndItems> findOnesOrderAndItems(String username, int page, int size) {
+        PageHelper.startPage(page,size);
+        Example example = new Example(Order.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("username",username);
+        criteria.andEqualTo("isDelete","0");
+        example.setOrderByClause("create_time desc");
+        Page<Order> orders = (Page<Order>) orderMapper.selectByExample(example);
+        List<OrderAndItems> list = new ArrayList<>();
+        for (Order order : orders) {
+            Example example1 = new Example(OrderItem.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("orderId",order.getId());
+            List<OrderItem> orderItems = orderItemMapper.selectByExample(example1);
+            OrderAndItems orderAndItems = new OrderAndItems();
+            orderAndItems.setOrder(order);
+            orderAndItems.setList(orderItems);
+            list.add(orderAndItems);
+        }
+        return new PageResult<OrderAndItems>(orders.getTotal(),list);
+    }
+
+    /**
+     * 待付款订单
+     * @param username
+     * @param page
+     * @param size
+     * @return
+     */
+    @Override
+    public PageResult<OrderAndItems> findOnesWaitToPayOrderAndItems(String username, int page, int size) {
+        PageHelper.startPage(page,size);
+        Example example = new Example(Order.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("username",username);
+        criteria.andEqualTo("orderStatus","0");
+        criteria.andEqualTo("isDelete","0");
+        example.setOrderByClause("create_time desc");
+        Page<Order> orders = (Page<Order>) orderMapper.selectByExample(example);
+        List<OrderAndItems> list = new ArrayList<>();
+        for (Order order : orders) {
+            Example example1 = new Example(OrderItem.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("orderId",order.getId());
+            List<OrderItem> orderItems = orderItemMapper.selectByExample(example1);
+            OrderAndItems orderAndItems = new OrderAndItems();
+            orderAndItems.setOrder(order);
+            orderAndItems.setList(orderItems);
+            list.add(orderAndItems);
+        }
+        return new PageResult<OrderAndItems>(orders.getTotal(),list);
+
+    }
+
+    /**
+     * 代发货订单
+     * @param username
+     * @param page
+     * @param size
+     * @return
+     */
+    @Override
+    public PageResult<OrderAndItems> findOnesWaitToSendOrderAndItems(String username, int page, int size) {
+        PageHelper.startPage(page,size);
+        Example example = new Example(Order.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("username",username);
+        criteria.andEqualTo("orderStatus","1");
+        criteria.andEqualTo("isDelete","0");
+        example.setOrderByClause("create_time desc");
+        Page<Order> orders = (Page<Order>) orderMapper.selectByExample(example);
+        List<OrderAndItems> list = new ArrayList<>();
+        for (Order order : orders) {
+            Example example1 = new Example(OrderItem.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("orderId",order.getId());
+            List<OrderItem> orderItems = orderItemMapper.selectByExample(example1);
+            OrderAndItems orderAndItems = new OrderAndItems();
+            orderAndItems.setOrder(order);
+            orderAndItems.setList(orderItems);
+            list.add(orderAndItems);
+        }
+        return new PageResult<OrderAndItems>(orders.getTotal(),list);
+    }
+
+    /**
+     * 待收货
+     * @param username
+     * @param page
+     * @param size
+     * @return
+     */
+    @Override
+    public PageResult<OrderAndItems> findOnesWaitToReceiveOrderAndItems(String username, int page, int size) {
+        PageHelper.startPage(page,size);
+        Example example = new Example(Order.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("username",username);
+        criteria.andEqualTo("orderStatus","2");
+        criteria.andEqualTo("isDelete","0");
+        example.setOrderByClause("create_time desc");
+        Page<Order> orders = (Page<Order>) orderMapper.selectByExample(example);
+        List<OrderAndItems> list = new ArrayList<>();
+        for (Order order : orders) {
+            Example example1 = new Example(OrderItem.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("orderId",order.getId());
+            List<OrderItem> orderItems = orderItemMapper.selectByExample(example1);
+            OrderAndItems orderAndItems = new OrderAndItems();
+            orderAndItems.setOrder(order);
+            orderAndItems.setList(orderItems);
+            list.add(orderAndItems);
+        }
+        return new PageResult<OrderAndItems>(orders.getTotal(),list);
+    }
+
+    /**
+     * 待评价
+     * @param username
+     * @param page
+     * @param size
+     * @return
+     */
+    @Override
+    public PageResult<OrderAndItems> findOnesWaitToEvaluateOrderAndItems(String username, int page, int size) {
+        PageHelper.startPage(page,size);
+        Example example = new Example(Order.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("username",username);
+        criteria.andEqualTo("isDelete","0");
+        criteria.andEqualTo("orderStatus","3");
+        criteria.andEqualTo("buyerRate","0");
+        example.setOrderByClause("create_time desc");
+        Page<Order> orders = (Page<Order>) orderMapper.selectByExample(example);
+        List<OrderAndItems> list = new ArrayList<>();
+        for (Order order : orders) {
+            Example example1 = new Example(OrderItem.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("orderId",order.getId());
+            List<OrderItem> orderItems = orderItemMapper.selectByExample(example1);
+            OrderAndItems orderAndItems = new OrderAndItems();
+            orderAndItems.setOrder(order);
+            orderAndItems.setList(orderItems);
+            list.add(orderAndItems);
+        }
+        return new PageResult<OrderAndItems>(orders.getTotal(),list);
+    }
+
+    /**
+     * 确认收货
+     * @param id
+     * @return
+     */
+    @Override
+    public Result confirmReceive(String id) {
+        try {
+            Order order = new Order();
+            order.setId(id);
+            order.setOrderStatus("3");
+            update(order);
+            return new Result(0,"收货成功!");
+        } catch (Exception e) {
+            return new Result(1,"收货失败!");
+        }
+    }
+
+    /**
+     * 根据订单id查询订单和订单详情
+     * @param id
+     * @return
+     */
+    @Override
+    public OrderAndItems findOrderAndItemsByOrderId(String id) {
+        Order order = orderMapper.selectByPrimaryKey(id);
+        Example example = new Example(OrderItem.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orderId",id);
+        List<OrderItem> orderItems = orderItemMapper.selectByExample(example);
+        OrderAndItems orderAndItems = new OrderAndItems();
+        orderAndItems.setOrder(order);
+        orderAndItems.setList(orderItems);
+        return orderAndItems;
+    }
+
+    @Override
+    public Result removeOrder(String orderId) {
+        try {
+            Order order = orderMapper.selectByPrimaryKey(orderId);
+            order.setIsDelete("1");
+            orderMapper.updateByPrimaryKeySelective(order);
+            return new Result(0,"订单删除成功!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(1,"订单删除失败!");
+        }
     }
 
     /**

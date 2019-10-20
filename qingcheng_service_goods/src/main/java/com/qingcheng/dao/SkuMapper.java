@@ -8,19 +8,20 @@ import tk.mybatis.mapper.common.Mapper;
 public interface SkuMapper extends Mapper<Sku> {
 
     /**
-     * 扣减库存方法
-     * @param id
+     * 更新库存
+     *
+     * @param skuId
      * @param num
      */
-    @Select("update tb_sku set num=num-#{num} where id=#{id}")
-    public void deductionStock(@Param("id") String id, @Param("num") Integer num);
+    @Select("update tb_sku set num = num - #{num} where id = #{skuId}")
+    public void deductionStock(@Param("skuId") String skuId, @Param("num") Integer num);
 
     /**
-     * 添加销量
-     * @param id
+     * 更新销量
+     *
+     * @param skuId
      * @param num
      */
-    @Select("update tb_sku set sale_num=sale_num+#{num} where id=#{id}")
-    public void addSaleNum(@Param("id") String id, @Param("num") Integer num );
-
+    @Select("update tb_sku set sale_num = sale_num + #{num} where id = #{skuId}")
+    public void addSaleNum(@Param("skuId") String skuId, @Param("num") Integer num);
 }

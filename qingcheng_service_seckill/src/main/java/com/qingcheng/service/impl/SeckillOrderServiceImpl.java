@@ -1,13 +1,10 @@
 package com.qingcheng.service.impl;
 
 import com.alibaba.dubbo.config.annotation.Service;
-import com.qingcheng.dao.SeckillGoodsMapper;
 import com.qingcheng.dao.SeckillOrderMapper;
-import com.qingcheng.pojo.seckill.SeckillGoods;
 import com.qingcheng.pojo.seckill.SeckillOrder;
 import com.qingcheng.service.seckill.SeckillOrderService;
 import com.qingcheng.task.MultiThreadingCreateOrder;
-import com.qingcheng.util.IdWorker;
 import com.qingcheng.util.SeckillStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;

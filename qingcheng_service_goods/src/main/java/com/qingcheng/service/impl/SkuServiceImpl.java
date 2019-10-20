@@ -17,6 +17,7 @@ import java.util.*;
 
 @Service(interfaceClass =SkuService.class )
 public class SkuServiceImpl implements SkuService {
+
     @Autowired
     private SkuMapper skuMapper;
 
@@ -27,14 +28,6 @@ public class SkuServiceImpl implements SkuService {
     public List<Sku> findAll() {
         return skuMapper.selectAll();
     }
-
-      public List<Sku> findBySpuId(String spuId){
-             Example example= new Example(Sku.class);
-          Example.Criteria criteria = example.createCriteria();
-                 criteria.andEqualTo("spuId",spuId);
-          return  skuMapper.selectByExample(example);
-
-      }
 
     /**
      * 分页查询

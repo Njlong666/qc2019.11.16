@@ -9,22 +9,10 @@
 	<rabbit:admin connection-factory="connectionFactory"></rabbit:admin>
 	<!--队列-->
 	<rabbit:queue name="queue.skuback" />
-	<rabbit:queue name="queue.push" />
-	<rabbit:queue name="queue.update" />
-	<rabbit:queue name="queue.pull" />
-	<rabbit:queue name="queue.delete" />
 	<!--消费者监听类-->
 	<bean id="messageConsumer" class="com.qingcheng.consumer.BackMessageConsumer"></bean>
-	<bean id="messageConsumer1" class="com.qingcheng.consumer.SmsMessageConsumer1"></bean>
-	<bean id="messageConsumer2" class="com.qingcheng.consumer.SmsMessageConsumer2"></bean>
-	<bean id="messageConsumer3" class="com.qingcheng.consumer.SmsMessageConsumer3"></bean>
-	<bean id="messageConsumer4" class="com.qingcheng.consumer.SmsMessageConsumer4"></bean>
 	<!--设置监听容器-->
 	<rabbit:listener-container connection-factory="connectionFactory" >
 		<rabbit:listener queue-names="queue.skuback" ref="messageConsumer"/>
-		<rabbit:listener queue-names="queue.push" ref="messageConsumer1"/>
-		<rabbit:listener queue-names="queue.update" ref="messageConsumer2"/>
-		<rabbit:listener queue-names="queue.pull" ref="messageConsumer3"/>
-		<rabbit:listener queue-names="queue.delete" ref="messageConsumer4"/>
 	</rabbit:listener-container>
 </beans>

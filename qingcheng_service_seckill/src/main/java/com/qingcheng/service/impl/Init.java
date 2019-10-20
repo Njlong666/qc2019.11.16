@@ -1,15 +1,13 @@
 package com.qingcheng.service.impl;
 
 import com.alibaba.dubbo.config.annotation.Reference;
-import com.qingcheng.dao.SeckillGoodsMapper;
+import com.qingcheng.dao.SecKillGoodsMapper;
 import com.qingcheng.pojo.goods.Sku;
 import com.qingcheng.pojo.seckill.SeckillGoods;
-import com.qingcheng.service.goods.CategoryService;
 import com.qingcheng.service.goods.SkuService;
 import com.qingcheng.util.DateUtil;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -18,7 +16,7 @@ import java.util.*;
 public class Init implements InitializingBean {
 
     @Autowired
-    private SeckillGoodsMapper seckillGoodsMapper;
+    private SecKillGoodsMapper seckillGoodsMapper;
 
     @Reference
     private SkuService skuService;
