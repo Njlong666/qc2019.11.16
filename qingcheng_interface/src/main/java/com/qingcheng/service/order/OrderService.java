@@ -95,4 +95,13 @@ public interface OrderService {
     public OrderAndItems findOrderAndItemsByOrderId(String id);
 
     public Result removeOrder(String orderId);
+
+
+
+    /*****
+     * 订单回滚
+     *
+     * @param orderId
+     */
+    public void rollBackOrder(String orderId);
 }
