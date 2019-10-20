@@ -443,11 +443,14 @@ public class OrderServiceImpl implements OrderService {
         // 使用微信查询订单api
         Map<String,String> map = weixinPayService.queryPayStatus(orderId);
         System.out.println("///////orderId"+map.get("return_code"));
+
+
         /***
          * 返回状态码	return_code		SUCCESS
          * 业务结果	    result_code		SUCCESS
          * 交易状态	    trade_state     NOTPAY—未支付
          */
+
         if ("SUCCESS".equals(map.get("return_code")) && "SUCCESS".equals(map.get("result_code") ) && "NOTPAY".equals(map.get("trade_state"))){
             //关闭微信订单
             Map<String,String> closePay = weixinPayService.closePay(orderId);
@@ -456,10 +459,10 @@ public class OrderServiceImpl implements OrderService {
 
         /*****
          *
-         * 交易状态	    trade_state     CLOSED—已关闭
+         * 交易状态描述	    trade_state_desc     订单未支付
          *
          */
-        if ("SUCCESS".equals(map.get("return_code")) && "SUCCESS".equals(map.get("result_code") ) && "CLOSED".equals(map.get("trade_state"))){
+        if ("订单未支付".equals(map.get("trade_state_desc"))){
             //修改以关闭的订单状态
             Order order = new Order();
             order.setId(orderId);
@@ -506,7 +509,7 @@ public class OrderServiceImpl implements OrderService {
                 "exchange.delay.order.begin", "delay", orderId,
                 message -> {
                     //   设置有效期
-                    message.getMessageProperties().setExpiration(String.valueOf(60000));
+                    message.getMessageProperties().setExpiration(String.valueOf(20000));
                     return message;
                 });
     }
