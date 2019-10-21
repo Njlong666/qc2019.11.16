@@ -520,11 +520,11 @@
                 location.href = `https://qingcheng.utools.club/pay.html?ordersn=${id}&money=${money}`;
             },
             alertSend() {
-                if(this.count==0) {
+                if(this.count < 3) {
                     alert("已提醒商家发货!");
-                    this.count = 1;
+                    this.count += 1;
                 } else {
-                    alert("今日以提醒!");
+                    alert("今日提醒次数用完!!");
                 }
 
             },

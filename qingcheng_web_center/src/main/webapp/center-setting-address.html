@@ -435,6 +435,7 @@
                 axios.get(`/userCenter/cities.do?provinceId=${this.address.provinceid}`).then(response => {
                     this.address.cityid= "";
                     this.address.areaid = "";
+                    this.areas = [];
                     this.cities = response.data;
                 });
             },
