@@ -1,6 +1,5 @@
 package com.qingcheng.consumer;
 
-import com.alibaba.fastjson.JSON;
 import com.qingcheng.pojo.goods.Sku;
 import com.qingcheng.service.goods.SkuService;
 import org.springframework.amqp.core.Message;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 
 
 public class SmsMessageConsumer3 implements MessageListener {

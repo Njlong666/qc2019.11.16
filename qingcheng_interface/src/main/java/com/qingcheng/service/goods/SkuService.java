@@ -70,5 +70,4 @@ public interface SkuService {
 
     public List<Sku> findBySpuId(String spuId);
 
-
 }

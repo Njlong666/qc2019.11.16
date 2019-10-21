@@ -57,7 +57,7 @@ public class Init implements InitializingBean {
 
             //添加SKU
             for (Sku sku:list) {
-                IndexRequest indexRequest=new IndexRequest("qingchengsku","doc",sku.getId());
+                IndexRequest indexRequest=new IndexRequest("qcsku","doc",sku.getId());
                 Map skuMap=new HashMap();
                 skuMap.put("name",sku.getName());
                 skuMap.put("brandName",sku.getBrandName());

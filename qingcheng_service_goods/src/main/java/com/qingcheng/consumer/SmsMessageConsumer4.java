@@ -1,6 +1,5 @@
 package com.qingcheng.consumer;
 
-import com.alibaba.fastjson.JSON;
 import com.qingcheng.pojo.goods.Sku;
 import com.qingcheng.service.goods.SkuService;
 import org.apache.http.HttpHost;
@@ -14,11 +13,10 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 
 public class SmsMessageConsumer4 implements MessageListener {
