@@ -417,7 +417,7 @@
                 });
             },
             getCities() {
-                this.cities = [];
+                this.areas = [];
                 this.city = '';
                 this.area = '';
                 axios.get(`/userCenter/cities.do?provinceId=${this.province}`).then(response => {
