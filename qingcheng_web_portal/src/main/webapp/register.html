@@ -11,6 +11,13 @@
 
     <link rel="stylesheet" type="text/css" href="./css/all.css" />
     <link rel="stylesheet" type="text/css" href="./css/pages-register.css" />
+	<style>
+		#time{
+			margin-left:20px;
+			color:green;
+			font-size: 14px;
+		}
+	</style>
 </head>
 
 <body>
@@ -84,6 +91,7 @@
 							<input type="text" placeholder="请输入你的手机号" class="input-xfat input-xlarge" v-model="pojo.phone">
 							<a @click="sendSms()"  v-model="getCode" id="getCode">发送短信验证码</a>
 						</div>
+						<span id="time"></span>
 					</div>
 					<div class="control-group">
 						<label for="inputPassword" class="control-label">验证码：</label>
