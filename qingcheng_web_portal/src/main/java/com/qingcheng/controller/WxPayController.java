@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -38,7 +37,7 @@ public class WxPayController {
 
             if("0".equals(order.getPayStatus())  && "0".equals(order.getOrderStatus()) &&  username.equals(order.getUsername()) ){
                 return  wxPayService.createNative(orderId,order.getPayMoney(),
-                        "https://qingcheng.utools.club/wxpay/notify.do");
+                        "http://qcnjl.easy.echosite.cn/wxpay/notify.do");
 
             }else{
                 return null;

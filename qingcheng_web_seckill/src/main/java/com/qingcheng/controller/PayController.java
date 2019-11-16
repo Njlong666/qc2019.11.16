@@ -4,6 +4,7 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.github.wxpay.sdk.WXPayUtil;
 import com.qingcheng.pojo.order.Order;
 import com.qingcheng.pojo.seckill.SeckillOrder;
+import com.qingcheng.pojo.user.User;
 import com.qingcheng.service.pay.WeixinPayService;
 import com.qingcheng.service.seckill.SeckillOrderService;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 
 @RestController
 @RequestMapping("/pay")
@@ -87,6 +89,7 @@ public class PayController {
 
     @GetMapping("/queryPayStatus")
     public Map queryPayStatus(String orderId){
+
         return  weixinPayService.queryPayStatus(orderId);
     }
 

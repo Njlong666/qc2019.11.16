@@ -488,7 +488,7 @@ public class OrderServiceImpl implements OrderService {
             orderLog.setId( idWorker.nextId()+"" );
             orderLog.setOperater("system");//系统
             orderLog.setOperateTime(new Date());//操作时间
-            orderLog.setOrderStatus("2");//订单状态
+            orderLog.setOrderStatus("4");//订单状态
             orderLog.setPayStatus("0");//支付状态
             orderLog.setRemarks("支付超时流水号:"+map.get("out_trade_no"));//备注
             orderLog.setConsignStatus("0");//发货状态

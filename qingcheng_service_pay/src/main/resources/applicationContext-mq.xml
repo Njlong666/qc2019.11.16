@@ -28,6 +28,7 @@
             <entry key="x-dead-letter-exchange" value="exchange.delay.order.done"/>
             <entry key="x-dead-letter-routing-key" value="delay"/>
         </rabbit:queue-arguments>
+
     </rabbit:queue>
 
     <!--交换机定义-->

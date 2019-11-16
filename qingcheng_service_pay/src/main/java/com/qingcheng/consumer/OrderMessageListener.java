@@ -13,11 +13,13 @@ import org.springframework.amqp.core.MessageListener;
  * @Author:itheima
  * @Description:
  *****/
+
 public class OrderMessageListener implements MessageListener {
 
 
     @Reference
     private OrderService orderService;
+
 
     @Override
     public void onMessage(Message message) {

@@ -1,6 +1,6 @@
 package com.qingcheng.timer;
 
-import com.qingcheng.dao.SeckillGoodsMapper1;
+import com.qingcheng.dao.SeckillGoodsMapper;
 import com.qingcheng.pojo.seckill.SeckillGoods;
 import com.qingcheng.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class SeckillGoodsTask {
     private RedisTemplate redisTemplate;
 
     @Autowired
-    private SeckillGoodsMapper1 seckillGoodsMapper;
+    private SeckillGoodsMapper seckillGoodsMapper;
 
     /*****
      * 30秒执行一次
