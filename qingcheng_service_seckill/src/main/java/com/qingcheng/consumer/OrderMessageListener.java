@@ -56,6 +56,7 @@ public class OrderMessageListener implements MessageListener {
         SeckillOrder seckillOrder = (SeckillOrder) redisTemplate.boundHashOps("SeckillOrder").get(seckillStatus.getUsername());
 
         //如果存在，开始回滚
+
         if(seckillOrder!=null){
             //1.关闭微信支付
             Map<String,String> map = weixinPayService.closePay(seckillStatus.getOrderId().toString());
